@@ -152,26 +152,49 @@ h1 {
         <h1>Safe Sky Alliance</h1>
         <div class="subtitle">Odaberite formu za popunjavanje</div>
 
-        <!-- Linkovi do formi -->
-        <a href="https://docs.google.com/forms/d/e/1FAIpQLScgHExmEVdK-I0OZ8AnA3uJ0ASJPoEe_eNW32ugQ5lpcx-p4Q/viewform" class="button blue">
-            ✈️ Aerophoto Report
-        </a>
+<!-- Linkovi do formi -->
+<a href="https://docs.google.com/forms/d/e/1FAIpQLScgHExmEVdK-I0OZ8AnA3uJ0ASJPoEe_eNW32ugQ5lpcx-p4Q/viewform" class="button blue">
+    ✈️ Aerophoto Report
+</a>
 
-        <a href="https://forms.gle/LEDoAUUqfPH73GAu5" class="button blue">
-            🛠 Equipment Request 
-        </a>
+<a href="https://forms.gle/LEDoAUUqfPH73GAu5" class="button blue">
+    🛠 Equipment Request 
+</a>
 
-        <a href="https://forms.gle/PDHTD1JdZRuz3St37" class="button orange">
-            ⚠️ Fault Report
-        </a>
+<a href="https://forms.gle/PDHTD1JdZRuz3St37" class="button orange">
+    ⚠️ Fault Report
+</a>
 
-        <a href="https://forms.gle/kWDjHkJuhV6eNNZA9" class="button green">
-            📝 Leave Request
-        </a>
+<a href="https://forms.gle/kWDjHkJuhV6eNNZA9" class="button green">
+    📝 Leave Request
+</a>
 
-        <a href="https://forms.gle/NNwYZCSLVjjhRCBAA" class="button yellow">
-            ⛽ Vehicle Refuelling Report
-        </a>
+<a href="https://forms.gle/NNwYZCSLVjjhRCBAA" class="button yellow">
+    ⛽ Vehicle Refuelling Report
+</a>
+
+<!-- Admin dugme sa lozinkom -->
+<a href="#" class="button blue" onclick="goToAdmin()">🗂 Otvori administrativne sheet-ove</a>
+
+<script>
+function goToAdmin() {
+    const password = prompt("Unesite lozinku za admin panel:");
+    if(password === "ssa") {  // ovde stavi željenu lozinku
+        window.location.href = "sheets.html"; // vodi na admin stranicu
+    } else {
+        alert("Pogrešna lozinka!");
+    }
+}
+<script>
+function goToAdmin() {
+    const password = prompt("Unesite lozinku za admin panel:");
+    if(password === "tvojaLozinka123") {  // ovde stavi željenu lozinku
+        window.location.href = "sheets.html"; // vodi na admin stranicu
+    } else {
+        alert("Pogrešna lozinka!");
+    }
+}
+</script>
 
         <div class="footer">
             © 2026 Safe Sky Alliance
