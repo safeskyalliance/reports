@@ -87,7 +87,7 @@ h1 {
     font-size: 14px;
 }
 .button {
-    display: flex;
+    display: inline-flex;           /* inline-flex da zadrži oblik dugmeta */
     align-items: center;
     justify-content: center;
     gap: 12px;
@@ -100,8 +100,9 @@ h1 {
     font-size: 17px;
     box-shadow: 0 6px 15px rgba(0,0,0,0.3);
     transition: 0.2s ease;
-    width: 100%;          /* dugme sada puni celu širinu container-a */
-    box-sizing: border-box; /* padding se uračunava u širinu */
+
+    width: 100%;                    /* dugme zauzima celu širinu container-a */
+    box-sizing: border-box;          /* padding se uračunava u širinu */
 }
 
 .button:active {
