@@ -17,14 +17,13 @@ body {
 }
 
 .container {
-  max-width: 900px;
+  max-width: 1000px;
   width: 100%;
   text-align: center;
 }
 
 h1 { font-size: 26px; margin-bottom: 20px; }
 
-/* Tabela */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -42,7 +41,6 @@ table th {
   background-color: #1e2a45;
 }
 
-/* Filter inputi */
 input, button {
   margin: 5px;
   padding: 5px;
@@ -79,50 +77,81 @@ button#apply-filter {
         <th>Cost (RSD)</th>
         <th>Odometer</th>
         <th>Notes</th>
+        <th>Consumption (L/100km)</th>
       </tr>
     </thead>
     <tbody></tbody>
   </table>
 </div>
 
-<!-- PapaParse CDN -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
 
 <script>
-// URL do CSV Sheet-a
 const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRPLB_IA3YLNuvMFYRWKwam2hipyGN5XWWqmJYZyn1eS9aOEYbwjaER-3HuWxQn_qnKrNVg5z3p5_cT/pub?gid=1958934267&single=true&output=csv";
 
 let sheetData = [];
 
-// Učitavanje CSV podataka
 Papa.parse(sheetURL, {
   download: true,
   header: true,
   complete: function(results) {
     sheetData = results.data;
+    sortData(sheetData);
     renderTable(sheetData);
   }
 });
 
-// Funkcija za prikaz tabele
+function sortData(data) {
+  data.sort((a, b) => {
+    const vehicleA = a["Vehicle Registration Number (License Plate)"];
+    const vehicleB = b["Vehicle Registration Number (License Plate)"];
+
+    if (vehicleA < vehicleB) return -1;
+    if (vehicleA > vehicleB) return 1;
+
+    return new Date(a["Date of Refuelling"]) - new Date(b["Date of Refuelling"]);
+  });
+}
+
 function renderTable(data) {
   const tbody = document.querySelector("#data-table tbody");
   tbody.innerHTML = "";
+
+  let lastOdometerByVehicle = {};
+
   data.forEach(row => {
+
+    const vehicle = row["Vehicle Registration Number (License Plate)"];
+    const currentOdometer = parseFloat(row["Odometer Reading (Kilometers)"]);
+    const quantity = parseFloat(row["Total Quantity (Liters)"]);
+
+    let consumption = "-";
+
+    if (lastOdometerByVehicle[vehicle] && currentOdometer && quantity) {
+      const previousOdometer = lastOdometerByVehicle[vehicle];
+      const distance = currentOdometer - previousOdometer;
+
+      if (distance > 0) {
+        consumption = ((quantity / distance) * 100).toFixed(2);
+      }
+    }
+
+    lastOdometerByVehicle[vehicle] = currentOdometer;
+
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${row["Date of Refuelling"]}</td>
-      <td>${row["Vehicle Registration Number (License Plate)"]}</td>
-      <td>${row["Total Quantity (Liters)"]}</td>
+      <td>${vehicle}</td>
+      <td>${quantity}</td>
       <td>${row["Total Cost of Refuelling (Currency: RSD)"]}</td>
-      <td>${row["Odometer Reading (Kilometers)"]}</td>
+      <td>${currentOdometer}</td>
       <td>${row["Additional Notes/Comments"]}</td>
+      <td>${consumption}</td>
     `;
     tbody.appendChild(tr);
   });
 }
 
-// Filter po vozilu i datumu
 document.getElementById("apply-filter").addEventListener("click", () => {
   const vehicle = document.getElementById("vehicle-filter").value.trim().toLowerCase();
   const from = document.getElementById("date-from").value;
@@ -131,15 +160,18 @@ document.getElementById("apply-filter").addEventListener("click", () => {
   const filtered = sheetData.filter(row => {
     const rowDate = row["Date of Refuelling"];
     const rowVehicle = row["Vehicle Registration Number (License Plate)"].toLowerCase();
-    let dateOk = true, vehicleOk = true;
 
-    if (from) dateOk = rowDate >= from;
-    if (to) dateOk = dateOk && rowDate <= to;
+    let dateOk = true;
+    let vehicleOk = true;
+
+    if (from) dateOk = new Date(rowDate) >= new Date(from);
+    if (to) dateOk = dateOk && new Date(rowDate) <= new Date(to);
     if (vehicle) vehicleOk = rowVehicle.includes(vehicle);
 
     return dateOk && vehicleOk;
   });
 
+  sortData(filtered);
   renderTable(filtered);
 });
 </script>
