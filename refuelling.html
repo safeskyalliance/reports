@@ -142,7 +142,7 @@ function renderTable(data) {
     tr.innerHTML = `
       <td>${row["Date of Refuelling"]}</td>
       <td>${vehicle}</td>
-      <td>${quantity}</td>
+      <td>${quantity ? quantity.toLocaleString('sr-RS', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : ""}</td>
       <td>${row["Total Cost of Refuelling (Currency: RSD)"]}</td>
       <td>${currentOdometer}</td>
       <td>${row["Additional Notes/Comments"]}</td>
