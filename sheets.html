@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Sheet Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+body {
+  font-family: 'Inter', sans-serif;
+  background: #0f1c2e;
+  color: white;
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+.container {
+  max-width: 420px;
+  text-align: center;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 18px;
+  margin-bottom: 18px;
+  border-radius: 14px;
+  text-decoration: none;
+  color: white;
+  font-weight: 600;
+  font-size: 17px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+  transition: 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.button:active { transform: scale(0.98); }
+
+.blue { background: linear-gradient(135deg, #2563eb, #1e40af); }
+.orange { background: linear-gradient(135deg, #f97316, #c2410c); }
+.green { background: linear-gradient(135deg, #22c55e, #15803d); }
+.yellow { background: linear-gradient(135deg, #e0c060, #c9b04f); }
+
+h1 { font-size: 26px; margin-bottom: 20px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Admin Panel</h1>
+
+  <a href="https://docs.google.com/spreadsheets/d/1MoFmt4GgCdACzU-PtgUvMMXfzfFxyVfMdEjhGsB6eAM/edit?usp=share_link" target="_blank" class="button blue">
+    📝 Aerophoto REPORTS
+  </a>
+
+  <a href="https://docs.google.com/spreadsheets/d/10Ige2JEeDNje2XBx6nEFcOHA5Fp2KqgI9W8D3mZjRL8/edit?usp=share_link" target="_blank" class="button orange">
+    📝 Equipement REPORTS
+  </a>
+
+  <a href="https://docs.google.com/spreadsheets/d/1gQWlOemMCl6rtWxQQnaEx9i2VCKoZKXZP524Zj88xag/edit?usp=share_link" target="_blank" class="button green">
+    📝 Faults REPORTS
+  </a>
+
+  <a href="https://docs.google.com/spreadsheets/d/1MW8mvesMzpGToKCRk8dsSsgax_MXE68ifRWl1g3UZEY/edit?usp=share_link" target="_blank" class="button yellow">
+    📝 Leave REPORTS
+  </a>
+
+  <a href="https://docs.google.com/spreadsheets/d/193ZdoReXuUn_gqzdeAzt7bSHaUXi2bI1ZTXMbK1afXY/edit?usp=share_link" target="_blank" class="button blue">
+    📝 Refuelling REPORTS
+  </a>
+
+</div>
+</body>
+</html>
