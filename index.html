@@ -58,8 +58,9 @@ body {
 /* Glavni container */
 .container {
     width: 100%;
-    max-width: 420px;
+    max-width: 420px;  /* ograničava širinu dugmića na desktop i tablet */
     text-align: center;
+    margin: 0 auto;
 }
 
 .logo-circle {
@@ -86,7 +87,6 @@ h1 {
     font-size: 14px;
 }
 
-.button {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -100,6 +100,8 @@ h1 {
     font-size: 17px;
     box-shadow: 0 6px 15px rgba(0,0,0,0.3);
     transition: 0.2s ease;
+    width: 100%;          /* dugme sada puni celu širinu container-a */
+    box-sizing: border-box; /* padding se uračunava u širinu */
 }
 
 .button:active {
