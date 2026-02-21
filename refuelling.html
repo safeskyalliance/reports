@@ -122,8 +122,13 @@ function renderTable(data) {
   data.forEach(row => {
 
     const vehicle = row["Vehicle Registration Number (License Plate)"];
-    const currentOdometer = parseFloat(row["Odometer Reading (Kilometers)"]);
-    const quantity = parseFloat(row["Total Quantity (Liters)"]);
+    const currentOdometer = parseFloat(
+  row["Odometer Reading (Kilometers)"]?.replace(",", ".")
+);
+
+const quantity = parseFloat(
+  row["Total Quantity (Liters)"]?.replace(",", ".")
+);
 
     let consumption = "-";
 
