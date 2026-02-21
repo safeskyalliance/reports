@@ -35,25 +35,26 @@ body {
 }
 
 .logo-circle {
-    width: 90px;
-    height: 90px;
+    width: 70px;  /* smanjeno sa 90px */
+    height: 70px; /* smanjeno sa 90px */
     border-radius: 50%;
-    background: #1e3a8a;
+    background: rgba(30,58,138,0.6); /* providno da se vidi slika */
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 0 auto 15px auto;
-    font-size: 40px;
+    font-size: 30px; /* smanjena veličina emoji-ja */
 }
     .hero {
     width: 100%;
-    height: 200px; /* visina velike pozadinske sekcije */
-    background-image: url('tempImageApjG2R.jpeg'); /* tvoja velika slika */
-    background-size: cover;    /* pokriva ceo div */
-    background-position: center;
+    height: 250px; /* povećali smo visinu da slika bude “veća” */
+    background-image: url('tempImageApjG2R.jpeg');
+    background-size: cover;       /* pokriva ceo div */
+    background-position: center;  /* centrirana slika */
+    background-repeat: no-repeat; /* ne ponavlja sliku */
     display: flex;
     justify-content: center;
-    align-items: center;       /* emoji centriran vertikalno i horizontalno */
+    align-items: center;
+    border-radius: 12px; /* opcionalno: blago zaobljenje ivica */
     margin-bottom: 20px;
 }
 
