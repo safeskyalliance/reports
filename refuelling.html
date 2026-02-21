@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Refuelling Live Data</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+body {
+  font-family: 'Inter', sans-serif;
+  background: #0f1c2e;
+  color: white;
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+.container {
+  max-width: 900px;
+  width: 100%;
+  text-align: center;
+}
+
+h1 { font-size: 26px; margin-bottom: 20px; }
+
+/* Tabela */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  color: white;
+}
+
+table th, table td {
+  border: 1px solid #555;
+  padding: 8px;
+  text-align: center;
+}
+
+table th {
+  background-color: #1e2a45;
+}
+
+/* Filter inputi */
+input, button {
+  margin: 5px;
+  padding: 5px;
+  border-radius: 5px;
+  border: none;
+}
+
+button#apply-filter {
+  background-color: #2563eb;
+  color: white;
+  cursor: pointer;
+  font-weight: 600;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Refuelling Live Data</h1>
+
+  <div>
+    <label>Vehicle: <input type="text" id="vehicle-filter" placeholder="Unesi reg. broj"></label>
+    <label>From: <input type="date" id="date-from"></label>
+    <label>To: <input type="date" id="date-to"></label>
+    <button id="apply-filter">Apply Filter</button>
+  </div>
+
+  <table id="data-table">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Vehicle</th>
+        <th>Quantity (L)</th>
+        <th>Cost (RSD)</th>
+        <th>Odometer</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+<!-- PapaParse CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+
+<script>
+// URL do CSV Sheet-a
+const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRPLB_IA3YLNuvMFYRWKwam2hipyGN5XWWqmJYZyn1eS9aOEYbwjaER-3HuWxQn_qnKrNVg5z3p5_cT/pub?gid=1958934267&single=true&output=csv";
+
+let sheetData = [];
+
+// Učitavanje CSV podataka
+Papa.parse(sheetURL, {
+  download: true,
+  header: true,
+  complete: function(results) {
+    sheetData = results.data;
+    renderTable(sheetData);
+  }
+});
+
+// Funkcija za prikaz tabele
+function renderTable(data) {
+  const tbody = document.querySelector("#data-table tbody");
+  tbody.innerHTML = "";
+  data.forEach(row => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${row["Date of Refuelling"]}</td>
+      <td>${row["Vehicle Registration Number (License Plate)"]}</td>
+      <td>${row["Total Quantity (Liters)"]}</td>
+      <td>${row["Total Cost of Refuelling (Currency: RSD)"]}</td>
+      <td>${row["Odometer Reading (Kilometers)"]}</td>
+      <td>${row["Additional Notes/Comments"]}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+// Filter po vozilu i datumu
+document.getElementById("apply-filter").addEventListener("click", () => {
+  const vehicle = document.getElementById("vehicle-filter").value.trim().toLowerCase();
+  const from = document.getElementById("date-from").value;
+  const to = document.getElementById("date-to").value;
+
+  const filtered = sheetData.filter(row => {
+    const rowDate = row["Date of Refuelling"];
+    const rowVehicle = row["Vehicle Registration Number (License Plate)"].toLowerCase();
+    let dateOk = true, vehicleOk = true;
+
+    if (from) dateOk = rowDate >= from;
+    if (to) dateOk = dateOk && rowDate <= to;
+    if (vehicle) vehicleOk = rowVehicle.includes(vehicle);
+
+    return dateOk && vehicleOk;
+  });
+
+  renderTable(filtered);
+});
+</script>
+
+</body>
+</html>
