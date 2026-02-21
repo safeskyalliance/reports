@@ -158,8 +158,8 @@ h1 {
             ⛽ Vehicle Refuelling Report
         </a>
 
-        <!-- Admin dugme sa lozinkom -->
-        <button type="button" class="button blue" onclick="goToAdmin()">🗂 Otvori administrativne sheet-ove</button>
+        <!-- Admin dugme BEZ prompta -->
+        <a href="sheets.html" class="button blue">🗂 ADMIN Page</a>
 
         <div class="footer">
             © 2026 Safe Sky Alliance
@@ -167,25 +167,15 @@ h1 {
     </div>
 </div>
 
-<!-- JS za password -->
+<!-- JS za password za index -->
 <script>
 function checkPassword() {
     const pw = document.getElementById('pw').value;
-    if(pw === "cessna") { // promeni u željenu lozinku
+    if(pw === "cessna") { // promeni u željenu lozinku za pristup sajtu
         document.getElementById('password-screen').style.display = 'none';
         document.getElementById('content').classList.remove('hidden');
     } else {
         document.getElementById('msg').textContent = "Pogrešna lozinka!";
-    }
-}
-
-// Funkcija za admin dugme
-function goToAdmin() {
-    const password = prompt("Unesite lozinku za admin panel:");
-    if(password === "ssa") {  // stavi svoju lozinku za admin
-        window.location.href = "sheets.html"; // vodi na admin stranicu
-    } else {
-        alert("Pogrešna lozinka!");
     }
 }
 </script>
