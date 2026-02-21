@@ -50,6 +50,16 @@ h1 { font-size: 26px; margin-bottom: 20px; }
 </style>
 </head>
 <body>
+
+<script>
+// PROMPT ZA LOZINKU – aktivira se odmah kada se stranica otvori
+const password = prompt("Unesite lozinku za admin panel:");
+if(password !== "ssa") { // stavi istu lozinku kao u index.html
+    alert("Pogrešna lozinka! Vraćate se na početnu stranicu.");
+    window.location.href = "index.html"; // vraća korisnika nazad
+}
+</script>
+
 <div class="container">
   <h1>Admin Panel</h1>
 
