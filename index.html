@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
+/* Osnovni reset */
 * {
     margin: 0;
     padding: 0;
@@ -23,6 +24,38 @@ body {
     padding: 20px;
 }
 
+/* Password ekran */
+.hidden { display: none; }
+
+#password-screen {
+    width: 100%;
+    max-width: 420px;
+    margin: 50px auto;
+    text-align: center;
+}
+
+#password-screen input {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: none;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+#password-screen button {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: none;
+    background: #2563eb;
+    color: white;
+    cursor: pointer;
+}
+
+/* Glavni container */
 .container {
     width: 100%;
     max-width: 420px;
@@ -73,7 +106,7 @@ h1 {
     transform: scale(0.98);
 }
 
-/* Dugmići */
+/* Dugmići boje */
 .blue {
     background: linear-gradient(135deg, #2563eb, #1e40af);
 }
@@ -91,33 +124,6 @@ h1 {
     font-size: 12px;
     color: #6b7280;
 }
-
-/* Password ekran */
-.hidden { display: none; }
-
-#password-screen {
-    width: 100%;
-    max-width: 420px;
-    text-align: center;
-    margin-top: 50px;
-}
-#password-screen input {
-    padding: 10px;
-    font-size: 16px;
-    border-radius: 8px;
-    border: none;
-    margin-top: 10px;
-    margin-bottom: 10px;
-}
-#password-screen button {
-    padding: 10px 20px;
-    font-size: 16px;
-    border-radius: 8px;
-    border: none;
-    background: #2563eb;
-    color: white;
-    cursor: pointer;
-}
 </style>
 </head>
 <body>
@@ -130,10 +136,9 @@ h1 {
     <p id="msg" style="color:red;"></p>
 </div>
 
-<!-- Sadržaj sajta -->
+<!-- Glavni sadržaj -->
 <div id="content" class="hidden">
     <div class="container">
-
         <div class="logo-circle">✈️</div>
         <h1>Post Flight Forms</h1>
         <div class="subtitle">Odaberite formu za popunjavanje</div>
@@ -158,10 +163,10 @@ h1 {
         <div class="footer">
             © 2026 Safe Sky Alliance
         </div>
-
     </div>
 </div>
 
+<!-- JS za password -->
 <script>
 function checkPassword() {
     const pw = document.getElementById('pw').value;
