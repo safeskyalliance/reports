@@ -29,11 +29,6 @@ body {
     text-align: center;
 }
 
-.logo {
-    margin-top: 30px;
-    margin-bottom: 20px;
-}
-
 .logo-circle {
     width: 90px;
     height: 90px;
@@ -79,7 +74,6 @@ h1 {
 }
 
 /* Dugmići */
-
 .blue {
     background: linear-gradient(135deg, #2563eb, #1e40af);
 }
@@ -97,42 +91,88 @@ h1 {
     font-size: 12px;
     color: #6b7280;
 }
-</style>
 
+/* Password ekran */
+.hidden { display: none; }
+
+#password-screen {
+    width: 100%;
+    max-width: 420px;
+    text-align: center;
+    margin-top: 50px;
+}
+#password-screen input {
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: none;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+#password-screen button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: none;
+    background: #2563eb;
+    color: white;
+    cursor: pointer;
+}
+</style>
 </head>
 <body>
 
-<div class="container">
+<!-- Password ekran -->
+<div id="password-screen">
+    <h2>Unesite lozinku da pristupite sajtu</h2>
+    <input type="password" id="pw" placeholder="Lozinka">
+    <button onclick="checkPassword()">Pristupi</button>
+    <p id="msg" style="color:red;"></p>
+</div>
 
-    <div class="logo">
+<!-- Sadržaj sajta -->
+<div id="content" class="hidden">
+    <div class="container">
+
         <div class="logo-circle">✈️</div>
         <h1>Post Flight Forms</h1>
         <div class="subtitle">Odaberite formu za popunjavanje</div>
+
+        <!-- Linkovi do formi -->
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLScgHExmEVdK-I0OZ8AnA3uJ0ASJPoEe_eNW32ugQ5lpcx-p4Q/viewform" class="button blue">
+            ✈️ Aerophoto Report
+        </a>
+
+        <a href="LINK_DO_FORME_2" class="button blue">
+            🛠 Technical Report
+        </a>
+
+        <a href="LINK_DO_FORME_3" class="button orange">
+            ⚠️ Incident Report
+        </a>
+
+        <a href="LINK_DO_FORME_4" class="button green">
+            📝 General Feedback
+        </a>
+
+        <div class="footer">
+            © 2026 Safe Sky Alliance
+        </div>
+
     </div>
-
-    <!-- ZAMENI LINKOVE ISPOD -->
-
-    <a href="https://docs.google.com/forms/d/e/1FAIpQLScgHExmEVdK-I0OZ8AnA3uJ0ASJPoEe_eNW32ugQ5lpcx-p4Q/viewform" class="button blue">
-        ✈️ Aerophoto Report
-    </a>
-
-    <a href="LINK_DO_FORME_2" class="button blue">
-        🛠 Technical Report
-    </a>
-
-    <a href="LINK_DO_FORME_3" class="button orange">
-        ⚠️ Incident Report
-    </a>
-
-    <a href="LINK_DO_FORME_4" class="button green">
-        📝 General Feedback
-    </a>
-
-    <div class="footer">
-        © 2026 Safe Sky Alliance
-    </div>
-
 </div>
+
+<script>
+function checkPassword() {
+    const pw = document.getElementById('pw').value;
+    if(pw === "cessna") { // promeni u željenu lozinku
+        document.getElementById('password-screen').style.display = 'none';
+        document.getElementById('content').classList.remove('hidden');
+    } else {
+        document.getElementById('msg').textContent = "Pogrešna lozinka!";
+    }
+}
+</script>
 
 </body>
 </html>
