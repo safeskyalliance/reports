@@ -9,7 +9,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
-/* Osnovni reset */
 * {
     margin: 0;
     padding: 0;
@@ -101,7 +100,6 @@ h1 {
     box-shadow: 0 6px 15px rgba(0,0,0,0.3);
     transition: 0.2s ease;
     width: 100%;
-    box-sizing: border-box;
 }
 
 .button:active {
@@ -120,30 +118,36 @@ h1 {
 }
 </style>
 </head>
+
 <body>
 
-<!-- Password ekran -->
+<!-- LOGIN SCREEN -->
 <div id="password-screen">
-    <h2>Unesite lozinku da pristupite sajtu</h2>
-    <input type="password" id="pw" placeholder="Lozinka">
-    <button onclick="checkPassword()">Pristupi</button>
+    <h2>Prijava</h2>
+
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="pw" placeholder="Password">
+
+    <button onclick="login()">Prijava</button>
+
     <p id="msg" style="color:red;"></p>
 </div>
 
-<!-- Glavni sadržaj -->
+<!-- MAIN APP -->
 <div id="content" class="hidden">
     <div class="container">
+
         <div class="logo-circle">✈️</div>
+
         <h1>Safe Sky Alliance</h1>
         <div class="subtitle">Odaberite formu za popunjavanje</div>
 
-        <!-- Linkovi do formi -->
         <a href="https://docs.google.com/forms/d/e/1FAIpQLScgHExmEVdK-I0OZ8AnA3uJ0ASJPoEe_eNW32ugQ5lpcx-p4Q/viewform" class="button blue">
             ✈️ Aerophoto Report
         </a>
 
         <a href="https://forms.gle/LEDoAUUqfPH73GAu5" class="button blue">
-            🛠 Equipment Request 
+            🛠 Equipment Request
         </a>
 
         <a href="https://forms.gle/PDHTD1JdZRuz3St37" class="button orange">
@@ -158,7 +162,6 @@ h1 {
             ⛽ Vehicle Refuelling Report
         </a>
 
-        <!-- Admin dugme BEZ prompta -->
         <a href="sheets.html" class="button blue">🗂 ADMIN Page</a>
 
         <div class="footer">
@@ -167,17 +170,41 @@ h1 {
     </div>
 </div>
 
-<!-- JS za password za index -->
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+
 <script>
-function checkPassword() {
-    const pw = document.getElementById('pw').value;
-    if(pw === "cessna") { // promeni u željenu lozinku za pristup sajtu
+const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_AUTH_DOMAIN",
+    projectId: "YOUR_PROJECT_ID",
+    appId: "YOUR_APP_ID"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+
+function login() {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("pw").value;
+
+    auth.signInWithEmailAndPassword(email, password)
+        .then(() => {
+            document.getElementById('password-screen').style.display = 'none';
+            document.getElementById('content').classList.remove('hidden');
+        })
+        .catch(err => {
+            document.getElementById('msg').textContent = err.message;
+        });
+}
+
+auth.onAuthStateChanged(user => {
+    if (user) {
         document.getElementById('password-screen').style.display = 'none';
         document.getElementById('content').classList.remove('hidden');
-    } else {
-        document.getElementById('msg').textContent = "Pogrešna lozinka!";
     }
-}
+});
 </script>
 
 </body>
