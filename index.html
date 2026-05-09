@@ -5,8 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Safe Sky Alliance Forms</title>
 
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#2563eb">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
@@ -27,30 +25,30 @@ body {
 
 .hidden { display: none; }
 
-#password-screen {
+#login-screen {
     width: 100%;
     max-width: 420px;
-    margin: 50px auto;
+    margin: 60px auto;
     text-align: center;
 }
 
-#password-screen input {
+#login-screen input {
     width: 100%;
-    padding: 10px;
-    font-size: 16px;
+    padding: 12px;
+    margin: 8px 0;
     border-radius: 8px;
     border: none;
-    margin: 8px 0;
+    font-size: 16px;
 }
 
-#password-screen button {
+#login-screen button {
     width: 100%;
-    padding: 10px;
-    font-size: 16px;
-    border-radius: 8px;
+    padding: 12px;
     border: none;
+    border-radius: 8px;
     background: #2563eb;
     color: white;
+    font-size: 16px;
     cursor: pointer;
 }
 
@@ -66,43 +64,52 @@ body {
     border-radius: 50%;
     background: #1e3a8a;
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
     margin: 0 auto 15px auto;
     font-size: 40px;
 }
 
-h1 { font-size: 26px; font-weight: 700; }
+h1 { font-size: 26px; }
 
 .subtitle {
-    margin: 8px 0 30px;
+    margin: 10px 0 25px;
     color: #9ca3af;
     font-size: 14px;
 }
 
 .button {
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    padding: 18px;
-    margin-bottom: 15px;
+    display: block;
+    width: 100%;
+    padding: 16px;
+    margin-bottom: 12px;
     border-radius: 14px;
     text-decoration: none;
     color: white;
     font-weight: 600;
-    width: 100%;
+    background: #2563eb;
     box-shadow: 0 6px 15px rgba(0,0,0,0.3);
 }
 
-.blue { background: linear-gradient(135deg, #2563eb, #1e40af); }
-.orange { background: linear-gradient(135deg, #f97316, #c2410c); }
-.green { background: linear-gradient(135deg, #22c55e, #15803d); }
-.yellow { background: linear-gradient(135deg, #e0c060, #c9b04f); }
+.orange { background: #f97316; }
+.green { background: #22c55e; }
+.yellow { background: #e0c060; }
 
 .footer {
-    margin-top: 40px;
+    margin-top: 30px;
     font-size: 12px;
     color: #6b7280;
+}
+
+.logout-btn {
+    background: #ef4444;
+    border: none;
+    padding: 12px;
+    border-radius: 10px;
+    color: white;
+    width: 100%;
+    margin-top: 10px;
+    cursor: pointer;
 }
 </style>
 </head>
@@ -110,7 +117,7 @@ h1 { font-size: 26px; font-weight: 700; }
 <body>
 
 <!-- LOGIN -->
-<div id="password-screen">
+<div id="login-screen">
     <h2>Safe Sky Alliance Login</h2>
 
     <input type="email" id="email" placeholder="Email">
@@ -122,7 +129,7 @@ h1 { font-size: 26px; font-weight: 700; }
 </div>
 
 <!-- APP -->
-<div id="content" class="hidden">
+<div id="app" class="hidden">
     <div class="container">
 
         <div class="logo-circle">✈️</div>
@@ -130,11 +137,11 @@ h1 { font-size: 26px; font-weight: 700; }
         <h1>Safe Sky Alliance</h1>
         <div class="subtitle">Forms Dashboard</div>
 
-        <a href="https://docs.google.com/forms/d/e/1FAIpQLScgHExmEVdK-I0OZ8AnA3uJ0ASJPoEe_eNW32ugQ5lpcx-p4Q/viewform" class="button blue">
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLScgHExmEVdK-I0OZ8AnA3uJ0ASJPoEe_eNW32ugQ5lpcx-p4Q/viewform" class="button">
             ✈️ Aerophoto Report
         </a>
 
-        <a href="https://forms.gle/LEDoAUUqfPH73GAu5" class="button blue">
+        <a href="https://forms.gle/LEDoAUUqfPH73GAu5" class="button">
             🛠 Equipment Request
         </a>
 
@@ -150,9 +157,11 @@ h1 { font-size: 26px; font-weight: 700; }
             ⛽ Vehicle Refuelling Report
         </a>
 
-        <a href="sheets.html" class="button blue">🗂 ADMIN Page</a>
+        <a href="sheets.html" class="button">
+            🗂 ADMIN Page
+        </a>
 
-        <button class="button orange" onclick="logout()">🚪 Logout</button>
+        <button class="logout-btn" onclick="logout()">🚪 Logout</button>
 
         <div class="footer">
             © 2026 Safe Sky Alliance
@@ -164,45 +173,49 @@ h1 { font-size: 26px; font-weight: 700; }
 <!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
 <script>
+// Firebase config (tvoj)
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_AUTH_DOMAIN",
-    projectId: "YOUR_PROJECT_ID",
-    appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyCrwQgz7Evs4gKgQRiR7s1JYLRqdK2WU80",
+  authDomain: "safe-sky-alliance.firebaseapp.com",
+  projectId: "safe-sky-alliance",
+  storageBucket: "safe-sky-alliance.firebasestorage.app",
+  messagingSenderId: "256572823166",
+  appId: "1:256572823166:web:d09d60574e565eb4c16a2f"
 };
 
 firebase.initializeApp(firebaseConfig);
+
 const auth = firebase.auth();
+const db = firebase.firestore();
 
 // LOGIN
 function login() {
     const email = document.getElementById("email").value;
     const password = document.getElementById("pw").value;
 
-    document.getElementById("msg").textContent = "";
-
     auth.signInWithEmailAndPassword(email, password)
-        .then(() => {
-            showApp();
-        })
-        .catch(err => {
-            document.getElementById("msg").textContent = err.message;
-        });
+    .then(() => {
+        showApp();
+    })
+    .catch(err => {
+        document.getElementById("msg").textContent = err.message;
+    });
 }
 
 // SHOW APP
 function showApp() {
-    document.getElementById('password-screen').style.display = 'none';
-    document.getElementById('content').classList.remove('hidden');
+    document.getElementById("login-screen").style.display = "none";
+    document.getElementById("app").classList.remove("hidden");
 }
 
 // LOGOUT
 function logout() {
     auth.signOut().then(() => {
-        document.getElementById('password-screen').style.display = 'block';
-        document.getElementById('content').classList.add('hidden');
+        document.getElementById("login-screen").style.display = "block";
+        document.getElementById("app").classList.add("hidden");
         document.getElementById("email").value = "";
         document.getElementById("pw").value = "";
     });
@@ -213,8 +226,8 @@ auth.onAuthStateChanged(user => {
     if (user) {
         showApp();
     } else {
-        document.getElementById('password-screen').style.display = 'block';
-        document.getElementById('content').classList.add('hidden');
+        document.getElementById("login-screen").style.display = "block";
+        document.getElementById("app").classList.add("hidden");
     }
 });
 </script>
