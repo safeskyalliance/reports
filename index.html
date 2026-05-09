@@ -9,10 +9,11 @@
 
 <style>
 body {
-  font-family: Inter;
+  font-family: Inter, sans-serif;
   background: #0f1c2e;
   color: white;
   text-align: center;
+  margin: 0;
 }
 
 .hidden { display:none; }
@@ -29,11 +30,13 @@ input, button {
   margin: 8px 0;
   border-radius: 10px;
   border: none;
+  font-size: 16px;
 }
 
 button {
   background: #2563eb;
   color: white;
+  cursor: pointer;
 }
 
 .button {
@@ -53,7 +56,7 @@ button {
 <!-- LOGIN -->
 <div id="login" class="container">
   <h2>Login</h2>
-  <input id="email" placeholder="Email">
+  <input id="email" type="email" placeholder="Email">
   <input id="pw" type="password" placeholder="Password">
   <button onclick="login()">Login</button>
 </div>
@@ -71,6 +74,7 @@ button {
 
 </div>
 
+<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 
@@ -84,27 +88,42 @@ firebase.initializeApp({
 
 const auth = firebase.auth();
 
-const OWNER_UID = "L1CAgL8P55gz6oztjj5LIY4saYu2";
+/* DOM ELEMENTS */
+const loginBox = document.getElementById("login");
+const appBox = document.getElementById("app");
 
-function login() {
-  auth.signInWithEmailAndPassword(
-    email.value, pw.value
-  );
-}
+/* LOGIN FUNCTION */
+window.login = function() {
 
-function logout() {
+  const email = document.getElementById("email").value;
+  const pw = document.getElementById("pw").value;
+
+  auth.signInWithEmailAndPassword(email, pw)
+    .then(() => {
+      console.log("Login success");
+    })
+    .catch(err => {
+      alert(err.message);
+      console.log(err);
+    });
+};
+
+/* LOGOUT */
+window.logout = function() {
   auth.signOut();
-}
+};
 
+/* AUTH STATE */
 auth.onAuthStateChanged(user => {
+
   if(!user){
-    login.style.display="block";
-    app.classList.add("hidden");
+    loginBox.style.display = "block";
+    appBox.classList.add("hidden");
     return;
   }
 
-  login.style.display="none";
-  app.classList.remove("hidden");
+  loginBox.style.display = "none";
+  appBox.classList.remove("hidden");
 });
 
 </script>
