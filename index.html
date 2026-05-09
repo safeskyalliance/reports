@@ -40,8 +40,7 @@ body {
     cursor: pointer;
 }
 
-/* HIDE */
-.hidden { display: none; }
+.hidden { display:none; }
 
 /* MAIN */
 .container {
@@ -65,15 +64,8 @@ body {
     font-size: 40px;
 }
 
-/* TITLE */
 h1 {
     font-size: 26px;
-    font-weight: 700;
-}
-
-.subtitle {
-    margin: 10px 0 25px 0;
-    color: #9ca3af;
 }
 
 /* BUTTONS */
@@ -86,17 +78,13 @@ h1 {
     color: white;
     font-weight: 600;
     font-size: 16px;
-    transition: 0.2s;
-}
-
-.button:active {
-    transform: scale(0.98);
 }
 
 .blue { background: linear-gradient(135deg, #2563eb, #1e40af); }
 .orange { background: linear-gradient(135deg, #f97316, #c2410c); }
 .green { background: linear-gradient(135deg, #22c55e, #15803d); }
 .yellow { background: linear-gradient(135deg, #eab308, #a16207); }
+.red { background: linear-gradient(135deg, #ef4444, #991b1b); }
 
 /* ADMIN */
 .admin {
@@ -106,13 +94,6 @@ h1 {
 /* LOGOUT */
 .logout {
     background: #ef4444;
-}
-
-/* FOOTER */
-.footer {
-    margin-top: 30px;
-    font-size: 12px;
-    color: #6b7280;
 }
 </style>
 </head>
@@ -136,9 +117,8 @@ h1 {
         <div class="logo-circle">✈️</div>
 
         <h1>Safe Sky Alliance</h1>
-        <div class="subtitle">Odaberite formu za popunjavanje</div>
 
-        <!-- GOOGLE FORMS -->
+        <!-- FORMS -->
         <a href="https://docs.google.com/forms/d/e/1FAIpQLScgHExmEVdK-I0OZ8AnA3uJ0ASJPoEe_eNW32ugQ5lpcx-p4Q/viewform"
            class="button blue" target="_blank">
             ✈️ Aerophoto Report
@@ -164,16 +144,14 @@ h1 {
             ⛽ Fuel Report
         </a>
 
-        <!-- ADMIN (Firebase role ostaje) -->
+        <!-- ADMIN PAGE (ONLY OWNER) -->
         <div id="adminPanel" class="admin hidden">
-            <a href="sheets.html" class="button blue">🗂 ADMIN PAGE</a>
+            <a href="sheets.html" class="button red">
+                🗂 ADMIN PAGE
+            </a>
         </div>
 
         <button class="button logout" onclick="logout()">🚪 Logout</button>
-
-        <div class="footer">
-            © 2026 Safe Sky Alliance
-        </div>
 
     </div>
 </div>
@@ -181,7 +159,6 @@ h1 {
 <!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
 <script>
 
@@ -197,9 +174,9 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 const auth = firebase.auth();
-const db = firebase.firestore();
 
-let isAdmin = false;
+/* YOUR OWNER UID */
+const OWNER_UID = "L1CAgL8P55gz6oztjj5LIY4saYu2";
 
 /* LOGIN */
 function login() {
@@ -216,21 +193,18 @@ function logout() {
 }
 
 /* AUTH STATE */
-auth.onAuthStateChanged(async user => {
+auth.onAuthStateChanged(user => {
     if (!user) {
-        document.getElementById("login").classList.remove("hidden");
+        document.getElementById("login").style.display = "block";
         document.getElementById("app").classList.add("hidden");
         return;
     }
 
-    document.getElementById("login").classList.add("hidden");
+    document.getElementById("login").style.display = "none";
     document.getElementById("app").classList.remove("hidden");
 
-    const doc = await db.collection("users").doc(user.uid).get();
-
-    isAdmin = doc.exists && doc.data().role === "admin";
-
-    if (isAdmin) {
+    /* OWNER CHECK */
+    if (user.uid === OWNER_UID) {
         document.getElementById("adminPanel").classList.remove("hidden");
     }
 });
