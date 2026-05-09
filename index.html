@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Safe Sky Alliance Forms</title>
+<title>Safe Sky Alliance</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
@@ -25,30 +25,28 @@ body {
 
 .hidden { display: none; }
 
-#login-screen {
+#login {
     width: 100%;
     max-width: 420px;
-    margin: 60px auto;
+    margin-top: 80px;
     text-align: center;
 }
 
-#login-screen input {
+#login input {
     width: 100%;
     padding: 12px;
     margin: 8px 0;
     border-radius: 8px;
     border: none;
-    font-size: 16px;
 }
 
-#login-screen button {
+#login button {
     width: 100%;
     padding: 12px;
     border: none;
     border-radius: 8px;
     background: #2563eb;
     color: white;
-    font-size: 16px;
     cursor: pointer;
 }
 
@@ -58,57 +56,29 @@ body {
     text-align: center;
 }
 
-.logo-circle {
-    width: 90px;
-    height: 90px;
-    border-radius: 50%;
-    background: #1e3a8a;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 15px auto;
+.logo {
     font-size: 40px;
-}
-
-h1 { font-size: 26px; }
-
-.subtitle {
-    margin: 10px 0 25px;
-    color: #9ca3af;
-    font-size: 14px;
+    margin-bottom: 10px;
 }
 
 .button {
     display: block;
-    width: 100%;
     padding: 16px;
-    margin-bottom: 12px;
-    border-radius: 14px;
+    margin: 10px 0;
+    border-radius: 12px;
     text-decoration: none;
     color: white;
-    font-weight: 600;
     background: #2563eb;
-    box-shadow: 0 6px 15px rgba(0,0,0,0.3);
 }
 
-.orange { background: #f97316; }
-.green { background: #22c55e; }
-.yellow { background: #e0c060; }
-
-.footer {
-    margin-top: 30px;
-    font-size: 12px;
-    color: #6b7280;
-}
-
-.logout-btn {
+.logout {
     background: #ef4444;
     border: none;
     padding: 12px;
-    border-radius: 10px;
-    color: white;
     width: 100%;
-    margin-top: 10px;
+    border-radius: 10px;
+    margin-top: 15px;
+    color: white;
     cursor: pointer;
 }
 </style>
@@ -117,13 +87,13 @@ h1 { font-size: 26px; }
 <body>
 
 <!-- LOGIN -->
-<div id="login-screen">
-    <h2>Safe Sky Alliance Login</h2>
+<div id="login">
+    <h2>Safe Sky Login</h2>
 
     <input type="email" id="email" placeholder="Email">
     <input type="password" id="pw" placeholder="Password">
 
-    <button onclick="login()">Prijava</button>
+    <button onclick="login()">Login</button>
 
     <p id="msg" style="color:red;"></p>
 </div>
@@ -132,64 +102,40 @@ h1 { font-size: 26px; }
 <div id="app" class="hidden">
     <div class="container">
 
-        <div class="logo-circle">✈️</div>
+        <div class="logo">✈️ Safe Sky Alliance</div>
 
-        <h1>Safe Sky Alliance</h1>
-        <div class="subtitle">Forms Dashboard</div>
+        <a class="button" href="https://docs.google.com/forms/d/e/1FAIpQLScgHExmEVdK-I0OZ8AnA3uJ0ASJPoEe_eNW32ugQ5lpcx-p4Q/viewform">Aerophoto Report</a>
+        <a class="button" href="https://forms.gle/LEDoAUUqfPH73GAu5">Equipment Request</a>
+        <a class="button" href="https://forms.gle/PDHTD1JdZRuz3St37">Fault Report</a>
+        <a class="button" href="https://forms.gle/kWDjHkJuhV6eNNZA9">Leave Request</a>
+        <a class="button" href="https://forms.gle/NNwYZCSLVjjhRCBAA">Fuel Report</a>
 
-        <a href="https://docs.google.com/forms/d/e/1FAIpQLScgHExmEVdK-I0OZ8AnA3uJ0ASJPoEe_eNW32ugQ5lpcx-p4Q/viewform" class="button">
-            ✈️ Aerophoto Report
-        </a>
+        <a class="button" href="sheets.html">ADMIN PAGE</a>
 
-        <a href="https://forms.gle/LEDoAUUqfPH73GAu5" class="button">
-            🛠 Equipment Request
-        </a>
-
-        <a href="https://forms.gle/PDHTD1JdZRuz3St37" class="button orange">
-            ⚠️ Fault Report
-        </a>
-
-        <a href="https://forms.gle/kWDjHkJuhV6eNNZA9" class="button green">
-            📝 Leave Request
-        </a>
-
-        <a href="https://forms.gle/NNwYZCSLVjjhRCBAA" class="button yellow">
-            ⛽ Vehicle Refuelling Report
-        </a>
-
-        <a href="sheets.html" class="button">
-            🗂 ADMIN Page
-        </a>
-
-        <button class="logout-btn" onclick="logout()">🚪 Logout</button>
-
-        <div class="footer">
-            © 2026 Safe Sky Alliance
-        </div>
+        <button class="logout" onclick="logout()">Logout</button>
 
     </div>
 </div>
 
-<!-- FIREBASE -->
+<!-- FIREBASE (COMPAT VERSION - FIXED) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
 <script>
-// Firebase config (tvoj)
+
+// 🔑 FIREBASE CONFIG (TVOJ)
 const firebaseConfig = {
   apiKey: "AIzaSyCrwQgz7Evs4gKgQRiR7s1JYLRqdK2WU80",
   authDomain: "safe-sky-alliance.firebaseapp.com",
   projectId: "safe-sky-alliance",
-  storageBucket: "safe-sky-alliance.firebasestorage.app",
+  storageBucket: "safe-sky-alliance.appspot.com",
   messagingSenderId: "256572823166",
   appId: "1:256572823166:web:d09d60574e565eb4c16a2f"
 };
 
+// INIT
 firebase.initializeApp(firebaseConfig);
-
 const auth = firebase.auth();
-const db = firebase.firestore();
 
 // LOGIN
 function login() {
@@ -207,17 +153,15 @@ function login() {
 
 // SHOW APP
 function showApp() {
-    document.getElementById("login-screen").style.display = "none";
+    document.getElementById("login").style.display = "none";
     document.getElementById("app").classList.remove("hidden");
 }
 
 // LOGOUT
 function logout() {
     auth.signOut().then(() => {
-        document.getElementById("login-screen").style.display = "block";
+        document.getElementById("login").style.display = "block";
         document.getElementById("app").classList.add("hidden");
-        document.getElementById("email").value = "";
-        document.getElementById("pw").value = "";
     });
 }
 
@@ -226,10 +170,11 @@ auth.onAuthStateChanged(user => {
     if (user) {
         showApp();
     } else {
-        document.getElementById("login-screen").style.display = "block";
+        document.getElementById("login").style.display = "block";
         document.getElementById("app").classList.add("hidden");
     }
 });
+
 </script>
 
 </body>
