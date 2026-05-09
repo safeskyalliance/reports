@@ -40,7 +40,6 @@ th, td {
 
 th {
   background: #1e2a45;
-  font-size: 12px;
 }
 
 input, button {
@@ -71,7 +70,7 @@ button {
   <button onclick="applyFilter()">Filter</button>
 </div>
 
-<table id="data-table">
+<table>
   <thead>
     <tr>
       <th>Date</th>
@@ -99,41 +98,53 @@ button {
 
 <script>
 
-const sheetURL = "PASTE_YOUR_AEROFOTO_SHEET_CSV";
+const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ63_O7Bwpf9uCQy1UzwjZkotEuJTEFK0rqKSfXUbN_b9ImPM2hGGN3CqfMDZkdjmpMrrgG-z2XfW70/pub?output=csv";
 
 let dataStore = [];
 
 Papa.parse(sheetURL, {
   download: true,
   header: true,
+  skipEmptyLines: true,
   complete: function(results) {
-    dataStore = results.data;
+
+    console.log("RAW DATA:", results.data);
+
+    // filter prazne redove
+    dataStore = results.data.filter(r => r["Date of Flight"]);
+
     render(dataStore);
   }
 });
 
+function safe(val) {
+  return val ? val : "";
+}
+
 function render(data) {
+
   const tbody = document.querySelector("tbody");
   tbody.innerHTML = "";
 
   data.forEach(row => {
+
     const tr = document.createElement("tr");
 
     tr.innerHTML = `
-      <td>${row["Date of Flight"]}</td>
-      <td>${row["Aircraft Registration"]}</td>
-      <td>${row["Pilot in Command (Name code)"]}</td>
-      <td>${row["Copilot (Name code)"]}</td>
-      <td>${row["Survey Observer/Technician (Name)"]}</td>
-      <td>${row["Departure Airport (ICAO)"]}</td>
-      <td>${row["Arrival Airport (ICAO)"]}</td>
-      <td>${row["Total Flight Duration"]}</td>
-      <td>${row["Survey Area/Project Name"]}</td>
-      <td>${row["Weather Conditions Encountered"]}</td>
-      <td>${row["Flight Quality Rating (CRM)"]}</td>
-      <td>${row["FUEL Uplift before flight"]}</td>
-      <td>${row["OIL Uplift before flight"]}</td>
-      <td>${row["Comments and Notes (flight or maintenance notes)"]}</td>
+      <td>${safe(row["Date of Flight"])}</td>
+      <td>${safe(row["Aircraft Registration"])}</td>
+      <td>${safe(row["Pilot in Command (Name code)"])}</td>
+      <td>${safe(row["Copilot (Name code)"])}</td>
+      <td>${safe(row["Survey Observer/Technician (Name)"])}</td>
+      <td>${safe(row["Departure Airport (ICAO)"])}</td>
+      <td>${safe(row["Arrival Airport (ICAO)"])}</td>
+      <td>${safe(row["Total Flight Duration"])}</td>
+      <td>${safe(row["Survey Area/Project Name"])}</td>
+      <td>${safe(row["Weather Conditions Encountered"])}</td>
+      <td>${safe(row["Flight Quality Rating (CRM)"])}</td>
+      <td>${safe(row["FUEL Uplift before flight"])}</td>
+      <td>${safe(row["OIL Uplift before flight"])}</td>
+      <td>${safe(row["Comments and Notes (flight or maintenance notes)"])}</td>
     `;
 
     tbody.appendChild(tr);
@@ -141,6 +152,7 @@ function render(data) {
 }
 
 function applyFilter() {
+
   const aircraft = document.getElementById("aircraft-filter").value.toLowerCase();
   const pilot = document.getElementById("pilot-filter").value.toLowerCase();
   const mission = document.getElementById("mission-filter").value.toLowerCase();
