@@ -3,87 +3,47 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Safe Sky Alliance Hub</title>
+<title>Safe Sky Hub</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
 body {
-    font-family: Inter, sans-serif;
-    background: linear-gradient(to bottom, #0f1c2e, #0a1422);
-    color: white;
-    margin: 0;
+  font-family: Inter;
+  background: #0f1c2e;
+  color: white;
+  text-align: center;
 }
 
 .hidden { display:none; }
 
-/* LOGIN */
-#login {
-    max-width: 400px;
-    margin: 100px auto;
-    text-align: center;
-}
-
-#login input {
-    width: 100%;
-    padding: 12px;
-    margin: 8px 0;
-    border-radius: 10px;
-    border: none;
-}
-
-#login button {
-    width: 100%;
-    padding: 12px;
-    border-radius: 10px;
-    border: none;
-    background: #2563eb;
-    color: white;
-}
-
-/* APP */
 .container {
-    max-width: 500px;
-    margin: auto;
-    text-align: center;
-    padding: 20px;
+  max-width: 500px;
+  margin: auto;
+  padding: 20px;
 }
 
-/* HEADER */
-.logo {
-    font-size: 40px;
-    margin-bottom: 10px;
+input, button {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border-radius: 10px;
+  border: none;
 }
 
-h1 {
-    font-size: 24px;
+button {
+  background: #2563eb;
+  color: white;
 }
 
-/* BUTTONS */
 .button {
-    display: block;
-    padding: 16px;
-    margin: 12px 0;
-    border-radius: 14px;
-    text-decoration: none;
-    color: white;
-    font-weight: 600;
-}
-
-.blue { background: linear-gradient(135deg, #2563eb, #1e40af); }
-.green { background: linear-gradient(135deg, #22c55e, #15803d); }
-.orange { background: linear-gradient(135deg, #f97316, #c2410c); }
-.yellow { background: linear-gradient(135deg, #eab308, #a16207); }
-.red { background: linear-gradient(135deg, #ef4444, #991b1b); }
-
-/* ADMIN */
-.admin {
-    margin-top: 20px;
-}
-
-/* LOGOUT */
-.logout {
-    background: #ef4444;
+  display:block;
+  padding: 14px;
+  margin: 10px 0;
+  border-radius: 12px;
+  background:#1e3a8a;
+  color:white;
+  text-decoration:none;
 }
 </style>
 </head>
@@ -91,120 +51,60 @@ h1 {
 <body>
 
 <!-- LOGIN -->
-<div id="login">
-    <h2>Login</h2>
-    <input id="email" type="email" placeholder="Email">
-    <input id="pw" type="password" placeholder="Password">
-    <button onclick="login()">Login</button>
+<div id="login" class="container">
+  <h2>Login</h2>
+  <input id="email" placeholder="Email">
+  <input id="pw" type="password" placeholder="Password">
+  <button onclick="login()">Login</button>
 </div>
 
-<!-- APP -->
-<div id="app" class="hidden">
+<!-- HUB -->
+<div id="app" class="hidden container">
 
-<div class="container">
+  <h2>✈️ Safe Sky Hub</h2>
 
-    <div class="logo">✈️</div>
-    <h1>Safe Sky Alliance Hub</h1>
+  <a class="button" href="aerofoto.html">✈️ Aerofoto</a>
+  <a class="button" href="refuelling.html">⛽ Refuelling</a>
+  <a class="button" href="sheets.html">🗂 Admin Panel</a>
 
-    <p>Ops Control Panel</p>
-
-    <!-- GOOGLE FORMS -->
-    <a class="button blue" target="_blank"
-       href="https://docs.google.com/forms/d/e/1FAIpQLScgHExmEVdK-I0OZ8AnA3uJ0ASJPoEe_eNW32ugQ5lpcx-p4Q/viewform">
-       ✈️ Aerophoto Form
-    </a>
-
-    <a class="button blue" target="_blank"
-       href="https://forms.gle/LEDoAUUqfPH73GAu5">
-       🛠 Equipment Request
-    </a>
-
-    <a class="button orange" target="_blank"
-       href="https://forms.gle/PDHTD1JdZRuz3St37">
-       ⚠️ Fault Report
-    </a>
-
-    <a class="button green" target="_blank"
-       href="https://forms.gle/kWDjHkJuhV6eNNZA9">
-       📝 Leave Request
-    </a>
-
-    <a class="button yellow" target="_blank"
-       href="https://forms.gle/NNwYZCSLVjjhRCBAA">
-       ⛽ Fuel Report
-    </a>
-
-    <!-- MODULES -->
-    <a class="button blue" href="aerofoto.html">
-       ✈️ Aerofoto Evidence
-    </a>
-
-    <a class="button blue" href="refuelling.html">
-       ⛽ Refuelling Dashboard
-    </a>
-
-    <!-- ADMIN -->
-    <div id="adminPanel" class="admin hidden">
-        <a class="button red" href="sheets.html">
-            🗂 ADMIN PAGE
-        </a>
-    </div>
-
-    <button class="button logout" onclick="logout()">🚪 Logout</button>
+  <button onclick="logout()">Logout</button>
 
 </div>
 
-</div>
-
-<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 
 <script>
 
-const firebaseConfig = {
+firebase.initializeApp({
   apiKey: "AIzaSyCShhQ3KHWwbJMIB9STLvXiNTOa6UJZDn4",
   authDomain: "safe-sky-app.firebaseapp.com",
-  projectId: "safe-sky-app",
-  storageBucket: "safe-sky-app.appspot.com",
-  messagingSenderId: "1083962320171",
-  appId: "1:1083962320171:web:b46354013124872e31116e"
-};
-
-firebase.initializeApp(firebaseConfig);
+  projectId: "safe-sky-app"
+});
 
 const auth = firebase.auth();
 
 const OWNER_UID = "L1CAgL8P55gz6oztjj5LIY4saYu2";
 
-/* LOGIN */
 function login() {
-    auth.signInWithEmailAndPassword(
-        document.getElementById("email").value,
-        document.getElementById("pw").value
-    );
+  auth.signInWithEmailAndPassword(
+    email.value, pw.value
+  );
 }
 
-/* LOGOUT */
 function logout() {
-    auth.signOut();
+  auth.signOut();
 }
 
-/* STATE */
 auth.onAuthStateChanged(user => {
+  if(!user){
+    login.style.display="block";
+    app.classList.add("hidden");
+    return;
+  }
 
-    if (!user) {
-        document.getElementById("login").style.display = "block";
-        document.getElementById("app").classList.add("hidden");
-        return;
-    }
-
-    document.getElementById("login").style.display = "none";
-    document.getElementById("app").classList.remove("hidden");
-
-    if (user.uid === OWNER_UID) {
-        document.getElementById("adminPanel").classList.remove("hidden");
-    }
+  login.style.display="none";
+  app.classList.remove("hidden");
 });
 
 </script>
