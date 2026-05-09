@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Safe Sky Alliance Forms</title>
+
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#2563eb">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
@@ -39,8 +40,7 @@ body {
     font-size: 16px;
     border-radius: 8px;
     border: none;
-    margin-top: 10px;
-    margin-bottom: 10px;
+    margin: 8px 0;
 }
 
 #password-screen button {
@@ -58,7 +58,6 @@ body {
     width: 100%;
     max-width: 420px;
     text-align: center;
-    margin: 0 auto;
 }
 
 .logo-circle {
@@ -73,37 +72,26 @@ body {
     font-size: 40px;
 }
 
-h1 {
-    font-size: 26px;
-    font-weight: 700;
-}
+h1 { font-size: 26px; font-weight: 700; }
 
 .subtitle {
-    margin-top: 8px;
-    margin-bottom: 30px;
+    margin: 8px 0 30px;
     color: #9ca3af;
     font-size: 14px;
 }
 
 .button {
     display: inline-flex;
-    align-items: center;
     justify-content: center;
-    gap: 12px;
+    align-items: center;
     padding: 18px;
-    margin-bottom: 18px;
+    margin-bottom: 15px;
     border-radius: 14px;
     text-decoration: none;
     color: white;
     font-weight: 600;
-    font-size: 17px;
-    box-shadow: 0 6px 15px rgba(0,0,0,0.3);
-    transition: 0.2s ease;
     width: 100%;
-}
-
-.button:active {
-    transform: scale(0.98);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.3);
 }
 
 .blue { background: linear-gradient(135deg, #2563eb, #1e40af); }
@@ -121,9 +109,9 @@ h1 {
 
 <body>
 
-<!-- LOGIN SCREEN -->
+<!-- LOGIN -->
 <div id="password-screen">
-    <h2>Prijava</h2>
+    <h2>Safe Sky Alliance Login</h2>
 
     <input type="email" id="email" placeholder="Email">
     <input type="password" id="pw" placeholder="Password">
@@ -133,14 +121,14 @@ h1 {
     <p id="msg" style="color:red;"></p>
 </div>
 
-<!-- MAIN APP -->
+<!-- APP -->
 <div id="content" class="hidden">
     <div class="container">
 
         <div class="logo-circle">✈️</div>
 
         <h1>Safe Sky Alliance</h1>
-        <div class="subtitle">Odaberite formu za popunjavanje</div>
+        <div class="subtitle">Forms Dashboard</div>
 
         <a href="https://docs.google.com/forms/d/e/1FAIpQLScgHExmEVdK-I0OZ8AnA3uJ0ASJPoEe_eNW32ugQ5lpcx-p4Q/viewform" class="button blue">
             ✈️ Aerophoto Report
@@ -164,9 +152,12 @@ h1 {
 
         <a href="sheets.html" class="button blue">🗂 ADMIN Page</a>
 
+        <button class="button orange" onclick="logout()">🚪 Logout</button>
+
         <div class="footer">
             © 2026 Safe Sky Alliance
         </div>
+
     </div>
 </div>
 
@@ -185,24 +176,45 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 
+// LOGIN
 function login() {
     const email = document.getElementById("email").value;
     const password = document.getElementById("pw").value;
 
+    document.getElementById("msg").textContent = "";
+
     auth.signInWithEmailAndPassword(email, password)
         .then(() => {
-            document.getElementById('password-screen').style.display = 'none';
-            document.getElementById('content').classList.remove('hidden');
+            showApp();
         })
         .catch(err => {
-            document.getElementById('msg').textContent = err.message;
+            document.getElementById("msg").textContent = err.message;
         });
 }
 
+// SHOW APP
+function showApp() {
+    document.getElementById('password-screen').style.display = 'none';
+    document.getElementById('content').classList.remove('hidden');
+}
+
+// LOGOUT
+function logout() {
+    auth.signOut().then(() => {
+        document.getElementById('password-screen').style.display = 'block';
+        document.getElementById('content').classList.add('hidden');
+        document.getElementById("email").value = "";
+        document.getElementById("pw").value = "";
+    });
+}
+
+// AUTO LOGIN
 auth.onAuthStateChanged(user => {
     if (user) {
-        document.getElementById('password-screen').style.display = 'none';
-        document.getElementById('content').classList.remove('hidden');
+        showApp();
+    } else {
+        document.getElementById('password-screen').style.display = 'block';
+        document.getElementById('content').classList.add('hidden');
     }
 });
 </script>
