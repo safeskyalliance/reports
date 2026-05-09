@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aerofoto Flight Log</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+body {
+  font-family: Inter, sans-serif;
+  background: #0f1c2e;
+  color: white;
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+.container {
+  max-width: 1400px;
+  width: 100%;
+  text-align: center;
+}
+
+h1 { margin-bottom: 20px; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  font-size: 12px;
+}
+
+th, td {
+  border: 1px solid #444;
+  padding: 6px;
+  text-align: center;
+}
+
+th {
+  background: #1e2a45;
+  font-size: 12px;
+}
+
+input, button {
+  padding: 6px;
+  margin: 5px;
+  border-radius: 6px;
+  border: none;
+}
+
+button {
+  background: #2563eb;
+  color: white;
+  cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>✈️ Aerofoto Flight Log</h1>
+
+<div>
+  <input type="text" id="aircraft-filter" placeholder="Aircraft">
+  <input type="text" id="pilot-filter" placeholder="Pilot">
+  <input type="text" id="mission-filter" placeholder="Mission">
+  <button onclick="applyFilter()">Filter</button>
+</div>
+
+<table id="data-table">
+  <thead>
+    <tr>
+      <th>Date</th>
+      <th>Aircraft</th>
+      <th>PIC</th>
+      <th>Copilot</th>
+      <th>Tech</th>
+      <th>Dep ICAO</th>
+      <th>Arr ICAO</th>
+      <th>Duration</th>
+      <th>Mission</th>
+      <th>Weather</th>
+      <th>CRM</th>
+      <th>Fuel</th>
+      <th>Oil</th>
+      <th>Notes</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+
+<script>
+
+const sheetURL = "PASTE_YOUR_AEROFOTO_SHEET_CSV";
+
+let dataStore = [];
+
+Papa.parse(sheetURL, {
+  download: true,
+  header: true,
+  complete: function(results) {
+    dataStore = results.data;
+    render(dataStore);
+  }
+});
+
+function render(data) {
+  const tbody = document.querySelector("tbody");
+  tbody.innerHTML = "";
+
+  data.forEach(row => {
+    const tr = document.createElement("tr");
+
+    tr.innerHTML = `
+      <td>${row["Date of Flight"]}</td>
+      <td>${row["Aircraft Registration"]}</td>
+      <td>${row["Pilot in Command (Name code)"]}</td>
+      <td>${row["Copilot (Name code)"]}</td>
+      <td>${row["Survey Observer/Technician (Name)"]}</td>
+      <td>${row["Departure Airport (ICAO)"]}</td>
+      <td>${row["Arrival Airport (ICAO)"]}</td>
+      <td>${row["Total Flight Duration"]}</td>
+      <td>${row["Survey Area/Project Name"]}</td>
+      <td>${row["Weather Conditions Encountered"]}</td>
+      <td>${row["Flight Quality Rating (CRM)"]}</td>
+      <td>${row["FUEL Uplift before flight"]}</td>
+      <td>${row["OIL Uplift before flight"]}</td>
+      <td>${row["Comments and Notes (flight or maintenance notes)"]}</td>
+    `;
+
+    tbody.appendChild(tr);
+  });
+}
+
+function applyFilter() {
+  const aircraft = document.getElementById("aircraft-filter").value.toLowerCase();
+  const pilot = document.getElementById("pilot-filter").value.toLowerCase();
+  const mission = document.getElementById("mission-filter").value.toLowerCase();
+
+  const filtered = dataStore.filter(row => {
+
+    let ok = true;
+
+    if (aircraft)
+      ok = row["Aircraft Registration"]?.toLowerCase().includes(aircraft);
+
+    if (pilot)
+      ok = ok && row["Pilot in Command (Name code)"]?.toLowerCase().includes(pilot);
+
+    if (mission)
+      ok = ok && row["Survey Area/Project Name"]?.toLowerCase().includes(mission);
+
+    return ok;
+  });
+
+  render(filtered);
+}
+
+</script>
+
+</body>
+</html>
