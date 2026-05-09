@@ -3,89 +3,116 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Safe Sky Alliance</title>
+<title>Safe Sky Alliance Forms</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
 body {
     font-family: Inter, sans-serif;
-    background:#0f172a;
-    color:white;
-    margin:0;
+    background: linear-gradient(to bottom, #0f1c2e, #0a1422);
+    color: white;
+    margin: 0;
 }
 
 /* LOGIN */
 #login {
-    max-width:400px;
-    margin:80px auto;
-    text-align:center;
+    max-width: 400px;
+    margin: 100px auto;
+    text-align: center;
 }
 
-/* MAIN WRAPPER */
-.box {
-    max-width:1000px;
-    margin:auto;
-    padding:20px;
+#login input {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    border-radius: 10px;
+    border: none;
 }
 
-/* GRID CELLS */
-.grid {
-    display:grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap:15px;
-    margin-top:15px;
+#login button {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    background: #2563eb;
+    color: white;
+    cursor: pointer;
 }
 
-/* CARD / CELLS */
-.card {
-    background:#1e293b;
-    padding:15px;
-    border-radius:12px;
-    border:1px solid #334155;
+/* HIDE */
+.hidden { display: none; }
+
+/* MAIN */
+.container {
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+    text-align: center;
+    padding: 20px;
 }
 
-/* INPUTS */
-input, textarea, select {
-    width:100%;
-    padding:10px;
-    margin:6px 0;
-    border-radius:8px;
-    border:none;
-    background:#0b1220;
-    color:white;
+/* LOGO */
+.logo-circle {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: #1e3a8a;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 15px auto;
+    font-size: 40px;
+}
+
+/* TITLE */
+h1 {
+    font-size: 26px;
+    font-weight: 700;
+}
+
+.subtitle {
+    margin: 10px 0 25px 0;
+    color: #9ca3af;
 }
 
 /* BUTTONS */
-button {
-    width:100%;
-    padding:10px;
-    border:none;
-    border-radius:8px;
-    background:#2563eb;
-    color:white;
-    cursor:pointer;
+.button {
+    display: block;
+    padding: 16px;
+    margin-bottom: 14px;
+    border-radius: 14px;
+    text-decoration: none;
+    color: white;
+    font-weight: 600;
+    font-size: 16px;
+    transition: 0.2s;
 }
 
-button:hover {
-    opacity:0.9;
+.button:active {
+    transform: scale(0.98);
 }
+
+.blue { background: linear-gradient(135deg, #2563eb, #1e40af); }
+.orange { background: linear-gradient(135deg, #f97316, #c2410c); }
+.green { background: linear-gradient(135deg, #22c55e, #15803d); }
+.yellow { background: linear-gradient(135deg, #eab308, #a16207); }
 
 /* ADMIN */
 .admin {
-    border:1px solid #f97316;
+    margin-top: 20px;
 }
 
 /* LOGOUT */
 .logout {
-    background:#ef4444;
+    background: #ef4444;
 }
 
-/* HIDE */
-.hidden { display:none; }
-
-h2 {
-    text-align:center;
+/* FOOTER */
+.footer {
+    margin-top: 30px;
+    font-size: 12px;
+    color: #6b7280;
 }
 </style>
 </head>
@@ -98,42 +125,57 @@ h2 {
     <input id="email" type="email" placeholder="Email">
     <input id="pw" type="password" placeholder="Password">
     <button onclick="login()">Login</button>
-    <p id="msg" style="color:red"></p>
+    <p id="msg" style="color:red;"></p>
 </div>
 
 <!-- APP -->
-<div id="app" class="box hidden">
+<div id="app" class="hidden">
 
-    <h2>✈️ Safe Sky Alliance</h2>
+    <div class="container">
 
-    <div id="adminPanel" class="card admin hidden">
-        <h3>🛠 ADMIN PANEL</h3>
-        <button onclick="loadReports()">📥 Load Reports</button>
-        <div id="reports" class="grid"></div>
-    </div>
+        <div class="logo-circle">✈️</div>
 
-    <div class="grid">
+        <h1>Safe Sky Alliance</h1>
+        <div class="subtitle">Odaberite formu za popunjavanje</div>
 
-        <div class="card">
-            <h3>📨 Submit Report</h3>
+        <!-- GOOGLE FORMS -->
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLScgHExmEVdK-I0OZ8AnA3uJ0ASJPoEe_eNW32ugQ5lpcx-p4Q/viewform"
+           class="button blue" target="_blank">
+            ✈️ Aerophoto Report
+        </a>
 
-            <select id="type">
-                <option>✈️ Aerophoto</option>
-                <option>🧰 Equipment</option>
-                <option>⚠️ Fault</option>
-                <option>🛫 Leave</option>
-                <option>⛽ Fuel</option>
-            </select>
+        <a href="https://forms.gle/LEDoAUUqfPH73GAu5"
+           class="button blue" target="_blank">
+            🛠 Equipment Request
+        </a>
 
-            <textarea id="message" placeholder="✍️ Opis..."></textarea>
+        <a href="https://forms.gle/PDHTD1JdZRuz3St37"
+           class="button orange" target="_blank">
+            ⚠️ Fault Report
+        </a>
 
-            <button onclick="sendReport()">🚀 Send</button>
+        <a href="https://forms.gle/kWDjHkJuhV6eNNZA9"
+           class="button green" target="_blank">
+            📝 Leave Request
+        </a>
+
+        <a href="https://forms.gle/NNwYZCSLVjjhRCBAA"
+           class="button yellow" target="_blank">
+            ⛽ Fuel Report
+        </a>
+
+        <!-- ADMIN (Firebase role ostaje) -->
+        <div id="adminPanel" class="admin hidden">
+            <a href="sheets.html" class="button blue">🗂 ADMIN PAGE</a>
+        </div>
+
+        <button class="button logout" onclick="logout()">🚪 Logout</button>
+
+        <div class="footer">
+            © 2026 Safe Sky Alliance
         </div>
 
     </div>
-
-    <button class="logout" onclick="logout()">🚪 Logout</button>
-
 </div>
 
 <!-- FIREBASE -->
@@ -159,6 +201,7 @@ const db = firebase.firestore();
 
 let isAdmin = false;
 
+/* LOGIN */
 function login() {
     auth.signInWithEmailAndPassword(
         document.getElementById("email").value,
@@ -167,10 +210,12 @@ function login() {
     .catch(e => document.getElementById("msg").innerText = e.message);
 }
 
+/* LOGOUT */
 function logout() {
     auth.signOut();
 }
 
+/* AUTH STATE */
 auth.onAuthStateChanged(async user => {
     if (!user) {
         document.getElementById("login").classList.remove("hidden");
@@ -189,37 +234,6 @@ auth.onAuthStateChanged(async user => {
         document.getElementById("adminPanel").classList.remove("hidden");
     }
 });
-
-function sendReport() {
-    const user = auth.currentUser;
-
-    db.collection("reports").add({
-        type: document.getElementById("type").value,
-        message: document.getElementById("message").value,
-        user: user.email,
-        time: Date.now()
-    });
-
-    alert("Sent!");
-}
-
-function loadReports() {
-    db.collection("reports")
-    .orderBy("time","desc")
-    .get()
-    .then(snap => {
-        let html = "";
-        snap.forEach(doc => {
-            const d = doc.data();
-            html += `<div class="card">
-                <b>${d.type}</b><br>
-                ${d.message}<br>
-                <small>${d.user}</small>
-            </div>`;
-        });
-        document.getElementById("reports").innerHTML = html;
-    });
-}
 
 </script>
 
