@@ -19,7 +19,7 @@ body {
 .hidden { display:none; }
 
 .container {
-  max-width: 500px;
+  max-width: 520px;
   margin: auto;
   padding: 20px;
 }
@@ -36,7 +36,6 @@ input, button {
 button {
   background: #2563eb;
   color: white;
-  cursor: pointer;
 }
 
 .button {
@@ -66,8 +65,37 @@ button {
 
   <h2>✈️ Safe Sky Hub</h2>
 
-  <a class="button" href="aerofoto.html">✈️ Aerofoto</a>
-  <a class="button" href="refuelling.html">⛽ Refuelling</a>
+  <!-- FORMS -->
+  <a class="button" target="_blank"
+     href="https://docs.google.com/forms/d/e/1FAIpQLScgHExmEVdK-I0OZ8AnA3uJ0ASJPoEe_eNW32ugQ5lpcx-p4Q/viewform">
+     ✈️ Aerophoto Report
+  </a>
+
+  <a class="button" target="_blank"
+     href="https://forms.gle/LEDoAUUqfPH73GAu5">
+     🛠 Equipment Request
+  </a>
+
+  <a class="button" target="_blank"
+     href="https://forms.gle/PDHTD1JdZRuz3St37">
+     ⚠️ Fault Report
+  </a>
+
+  <a class="button" target="_blank"
+     href="https://forms.gle/kWDjHkJuhV6eNNZA9">
+     📝 Leave Request
+  </a>
+
+  <a class="button" target="_blank"
+     href="https://forms.gle/NNwYZCSLVjjhRCBAA">
+     ⛽ Fuel Report
+  </a>
+
+  <!-- DASHBOARDS -->
+  <a class="button" href="aerofoto.html">✈️ Aerofoto Dashboard</a>
+  <a class="button" href="refuelling.html">⛽ Refuelling Dashboard</a>
+
+  <!-- ADMIN -->
   <a class="button" href="sheets.html">🗂 Admin Panel</a>
 
   <button onclick="logout()">Logout</button>
@@ -88,32 +116,22 @@ firebase.initializeApp({
 
 const auth = firebase.auth();
 
-/* DOM ELEMENTS */
 const loginBox = document.getElementById("login");
 const appBox = document.getElementById("app");
 
-/* LOGIN FUNCTION */
 window.login = function() {
 
   const email = document.getElementById("email").value;
   const pw = document.getElementById("pw").value;
 
   auth.signInWithEmailAndPassword(email, pw)
-    .then(() => {
-      console.log("Login success");
-    })
-    .catch(err => {
-      alert(err.message);
-      console.log(err);
-    });
+    .catch(err => alert(err.message));
 };
 
-/* LOGOUT */
 window.logout = function() {
   auth.signOut();
 };
 
-/* AUTH STATE */
 auth.onAuthStateChanged(user => {
 
   if(!user){
