@@ -8,172 +8,185 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
 body {
-    font-family: 'Inter', sans-serif;
-    background: linear-gradient(to bottom, #0f1c2e, #0a1422);
+    font-family: Inter;
+    background: #0f172a;
     color: white;
     display: flex;
     justify-content: center;
     padding: 20px;
 }
 
-.hidden { display: none; }
+.hidden { display:none; }
 
-#login {
+.box {
     width: 100%;
     max-width: 420px;
-    margin-top: 80px;
-    text-align: center;
+    text-align:center;
 }
 
-#login input {
-    width: 100%;
-    padding: 12px;
-    margin: 8px 0;
-    border-radius: 8px;
-    border: none;
+input, textarea {
+    width:100%;
+    padding:12px;
+    margin:6px 0;
+    border-radius:8px;
+    border:none;
 }
 
-#login button {
-    width: 100%;
-    padding: 12px;
-    border: none;
-    border-radius: 8px;
-    background: #2563eb;
-    color: white;
-    cursor: pointer;
+button {
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:8px;
+    background:#2563eb;
+    color:white;
+    cursor:pointer;
 }
 
-.container {
-    width: 100%;
-    max-width: 420px;
-    text-align: center;
+.card {
+    background:#1e293b;
+    padding:15px;
+    margin-top:10px;
+    border-radius:10px;
 }
 
-.logo {
-    font-size: 40px;
-    margin-bottom: 10px;
-}
-
-.button {
-    display: block;
-    padding: 16px;
-    margin: 10px 0;
-    border-radius: 12px;
-    text-decoration: none;
-    color: white;
-    background: #2563eb;
-}
-
-.logout {
-    background: #ef4444;
-    border: none;
-    padding: 12px;
-    width: 100%;
-    border-radius: 10px;
-    margin-top: 15px;
-    color: white;
-    cursor: pointer;
-}
+.admin { background:#f97316; }
+.logout { background:#ef4444; }
 </style>
 </head>
 
 <body>
 
 <!-- LOGIN -->
-<div id="login">
-    <h2>Safe Sky Login</h2>
-
-    <input type="email" id="email" placeholder="Email">
-    <input type="password" id="pw" placeholder="Password">
-
+<div id="login" class="box">
+    <h2>Login</h2>
+    <input id="email" type="email" placeholder="Email">
+    <input id="pw" type="password" placeholder="Password">
     <button onclick="login()">Login</button>
-
-    <p id="msg" style="color:red;"></p>
+    <p id="msg" style="color:red"></p>
 </div>
 
 <!-- APP -->
-<div id="app" class="hidden">
-    <div class="container">
+<div id="app" class="box hidden">
 
-        <div class="logo">✈️ Safe Sky Alliance</div>
+    <h2>Safe Sky Alliance</h2>
 
-        <a class="button" href="https://docs.google.com/forms/d/e/1FAIpQLScgHExmEVdK-I0OZ8AnA3uJ0ASJPoEe_eNW32ugQ5lpcx-p4Q/viewform">Aerophoto Report</a>
-        <a class="button" href="https://forms.gle/LEDoAUUqfPH73GAu5">Equipment Request</a>
-        <a class="button" href="https://forms.gle/PDHTD1JdZRuz3St37">Fault Report</a>
-        <a class="button" href="https://forms.gle/kWDjHkJuhV6eNNZA9">Leave Request</a>
-        <a class="button" href="https://forms.gle/NNwYZCSLVjjhRCBAA">Fuel Report</a>
-
-        <a class="button" href="sheets.html">ADMIN PAGE</a>
-
-        <button class="logout" onclick="logout()">Logout</button>
-
+    <div id="adminPanel" class="card admin hidden">
+        <h3>ADMIN PANEL</h3>
+        <button onclick="loadReports()">Load Reports</button>
+        <div id="reports"></div>
     </div>
+
+    <div class="card">
+        <h3>Submit Report</h3>
+
+        <select id="type">
+            <option>Aerophoto</option>
+            <option>Equipment</option>
+            <option>Fault</option>
+            <option>Leave</option>
+            <option>Fuel</option>
+        </select>
+
+        <textarea id="message" placeholder="Opis..."></textarea>
+
+        <button onclick="sendReport()">Send</button>
+    </div>
+
+    <button class="logout" onclick="logout()">Logout</button>
+
 </div>
 
-<!-- FIREBASE (COMPAT VERSION - FIXED) -->
+<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
 <script>
 
-// 🔑 FIREBASE CONFIG (TVOJ)
 const firebaseConfig = {
-  apiKey: "AIzaSyCrwQgz7Evs4gKgQRiR7s1JYLRqdK2WU80",
-  authDomain: "safe-sky-alliance.firebaseapp.com",
-  projectId: "safe-sky-alliance",
-  storageBucket: "safe-sky-alliance.appspot.com",
-  messagingSenderId: "256572823166",
-  appId: "1:256572823166:web:d09d60574e565eb4c16a2f"
+  apiKey: "AIzaSyCShhQ3KHWwbJMIB9STLvXiNTOa6UJZDn4",
+  authDomain: "safe-sky-app.firebaseapp.com",
+  projectId: "safe-sky-app",
+  storageBucket: "safe-sky-app.appspot.com",
+  messagingSenderId: "1083962320171",
+  appId: "1:1083962320171:web:b46354013124872e31116e"
 };
 
-// INIT
 firebase.initializeApp(firebaseConfig);
+
 const auth = firebase.auth();
+const db = firebase.firestore();
 
-// LOGIN
+let isAdmin = false;
+
+/* LOGIN */
 function login() {
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("pw").value;
-
-    auth.signInWithEmailAndPassword(email, password)
-    .then(() => {
-        showApp();
-    })
-    .catch(err => {
-        document.getElementById("msg").textContent = err.message;
-    });
+    auth.signInWithEmailAndPassword(
+        document.getElementById("email").value,
+        document.getElementById("pw").value
+    )
+    .catch(e => document.getElementById("msg").innerText = e.message);
 }
 
-// SHOW APP
-function showApp() {
-    document.getElementById("login").style.display = "none";
-    document.getElementById("app").classList.remove("hidden");
-}
-
-// LOGOUT
+/* LOGOUT */
 function logout() {
-    auth.signOut().then(() => {
-        document.getElementById("login").style.display = "block";
-        document.getElementById("app").classList.add("hidden");
-    });
+    auth.signOut();
 }
 
-// AUTO LOGIN
-auth.onAuthStateChanged(user => {
-    if (user) {
-        showApp();
-    } else {
-        document.getElementById("login").style.display = "block";
+/* CHECK USER */
+auth.onAuthStateChanged(async user => {
+    if (!user) {
+        document.getElementById("login").classList.remove("hidden");
         document.getElementById("app").classList.add("hidden");
+        return;
+    }
+
+    document.getElementById("login").classList.add("hidden");
+    document.getElementById("app").classList.remove("hidden");
+
+    // check role
+    const doc = await db.collection("users").doc(user.uid).get();
+
+    isAdmin = doc.exists && doc.data().role === "admin";
+
+    if (isAdmin) {
+        document.getElementById("adminPanel").classList.remove("hidden");
     }
 });
+
+/* SEND REPORT */
+function sendReport() {
+    const user = auth.currentUser;
+
+    db.collection("reports").add({
+        type: document.getElementById("type").value,
+        message: document.getElementById("message").value,
+        user: user.email,
+        time: Date.now()
+    });
+
+    alert("Sent!");
+}
+
+/* LOAD REPORTS (ADMIN) */
+function loadReports() {
+    db.collection("reports")
+    .orderBy("time","desc")
+    .get()
+    .then(snap => {
+        let html = "";
+        snap.forEach(doc => {
+            const d = doc.data();
+            html += `<div class="card">
+                <b>${d.type}</b><br>
+                ${d.message}<br>
+                <small>${d.user}</small>
+            </div>`;
+        });
+        document.getElementById("reports").innerHTML = html;
+    });
+}
 
 </script>
 
