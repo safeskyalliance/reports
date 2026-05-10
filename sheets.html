@@ -7,13 +7,24 @@
 
 <style>
 body {
-  font-family: Arial, sans-serif;
+  font-family: Inter, Arial, sans-serif;
   background: #0f1c2e;
   color: white;
   margin: 0;
-  padding: 0;
 }
 
+/* LOCK */
+#lockScreen {
+  position: fixed;
+  inset: 0;
+  background: #0f1c2e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+/* LAYOUT */
 .hidden { display: none; }
 
 .container {
@@ -23,26 +34,35 @@ body {
   text-align: center;
 }
 
+.section {
+  margin-top: 25px;
+  font-size: 13px;
+  opacity: 0.7;
+}
+
+/* BUTTONS */
 .button {
   display: block;
   padding: 14px;
   margin: 10px 0;
-  background: #2563eb;
-  border-radius: 10px;
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+  border-radius: 12px;
   cursor: pointer;
+  font-weight: 600;
+  text-decoration: none;
+  color: white;
 }
 
-.section {
-  margin-top: 20px;
-  font-size: 14px;
-  opacity: 0.8;
+/* SPECIAL BUTTON */
+.button.green {
+  background: linear-gradient(135deg, #22c55e, #15803d);
 }
 
 /* MODAL */
 .modal {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.7);
+  background: rgba(0,0,0,0.75);
   display: none;
   align-items: center;
   justify-content: center;
@@ -52,19 +72,56 @@ body {
   display: flex;
 }
 
+/* CARD LOOK (IMPORTANT FIX) */
 .modal-box {
   background: #111c2e;
-  padding: 20px;
-  border-radius: 12px;
+  padding: 25px;
+  border-radius: 18px;
   width: 90%;
   max-width: 420px;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+  text-align: center;
 }
 
-input, select {
+.modal-box h2 {
+  margin-bottom: 15px;
+}
+
+/* INPUTS LOOK GOOD */
+.input {
   width: 100%;
-  padding: 10px;
-  margin: 6px 0;
-  border-radius: 6px;
+  padding: 12px;
+  margin: 8px 0;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: #0f1c2e;
+  color: white;
+  outline: none;
+}
+
+.input:focus {
+  border-color: #2563eb;
+}
+
+/* BUTTONS */
+.btn {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  border-radius: 10px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn.primary {
+  background: #2563eb;
+  color: white;
+}
+
+.btn.secondary {
+  background: #334155;
+  color: white;
 }
 </style>
 </head>
@@ -74,14 +131,26 @@ input, select {
 <!-- LOCK -->
 <div id="lockScreen">Checking access...</div>
 
-<!-- CONTENT -->
+<!-- APP -->
 <div id="app" class="hidden container">
 
   <h1>🗂 Admin Panel</h1>
 
-  <div class="section">⛽ Fuel Management</div>
+  <!-- SYSTEMS -->
+  <div class="section">📊 LIVE SYSTEMS</div>
 
-  <div class="button" onclick="openFuel()">
+  <a class="button" href="aerofoto.html">
+    ✈️ Aerofoto Live Report
+  </a>
+
+  <a class="button" href="refuelling.html">
+    ⛽ Refuelling Live Report
+  </a>
+
+  <!-- FUEL -->
+  <div class="section">⛽ FUEL MANAGEMENT</div>
+
+  <div class="button green" onclick="openFuel()">
     ➕ Fuel Admin Entry
   </div>
 
@@ -92,22 +161,22 @@ input, select {
 
   <div class="modal-box">
 
-    <h3>Fuel Entry</h3>
+    <h2>⛽ Fuel Entry</h2>
 
-    <input id="date" type="date">
+    <input id="date" type="date" class="input">
 
-    <select id="company">
+    <select id="company" class="input">
       <option value="">Select Company</option>
       <option value="Topgeo">Topgeo</option>
       <option value="Ekosan">Ekosan</option>
       <option value="Ciklonizacija">Ciklonizacija</option>
     </select>
 
-    <input id="qty" type="number" placeholder="Quantity">
-    <input id="person" type="text" placeholder="Responsible Person">
+    <input id="qty" type="number" placeholder="Quantity (L)" class="input">
+    <input id="person" type="text" placeholder="Responsible Person" class="input">
 
-    <button onclick="submitFuel()">Submit</button>
-    <button onclick="closeFuel()">Close</button>
+    <button class="btn primary" onclick="submitFuel()">Submit</button>
+    <button class="btn secondary" onclick="closeFuel()">Close</button>
 
   </div>
 
@@ -143,7 +212,7 @@ auth.onAuthStateChanged(user => {
 
 });
 
-/* MODAL */
+/* OPEN / CLOSE */
 function openFuel() {
   document.getElementById("modal").classList.add("show");
 }
@@ -152,7 +221,7 @@ function closeFuel() {
   document.getElementById("modal").classList.remove("show");
 }
 
-/* CLOSE BACKDROP */
+/* BACKDROP CLOSE */
 document.getElementById("modal").addEventListener("click", e => {
   if (e.target.id === "modal") closeFuel();
 });
@@ -167,13 +236,24 @@ async function submitFuel() {
     person: document.getElementById("person").value
   };
 
+  if (!payload.date || !payload.company || !payload.quantity || !payload.person) {
+    alert("Fill all fields!");
+    return;
+  }
+
   await fetch(SCRIPT_URL, {
     method: "POST",
     body: JSON.stringify(payload)
   });
 
   alert("Saved!");
+
   closeFuel();
+
+  document.getElementById("date").value = "";
+  document.getElementById("company").value = "";
+  document.getElementById("qty").value = "";
+  document.getElementById("person").value = "";
 }
 
 </script>
