@@ -67,6 +67,12 @@ button {
 .yellow { background: linear-gradient(135deg, #e0c060, #c9b04f); }
 .admin { background: linear-gradient(135deg, #475569, #1e293b); }
 
+/* AVGAS BUTTON */
+
+.avgas-delivery {
+  background: linear-gradient(135deg, #1976d2, #0f4fa8);
+}
+
 /* LOGO */
 
 .logo-img {
@@ -118,26 +124,37 @@ button {
     Select report form
   </div>
 
+  <!-- 1 -->
   <a class="button blue" target="_blank"
      href="https://docs.google.com/forms/d/e/1FAIpQLScgHExmEVdK-I0OZ8AnA3uJ0ASJPoEe_eNW32ugQ5lpcx-p4Q/viewform">
      ✈️ Aerophoto Report
   </a>
 
+  <!-- 2 (NEW) -->
+  <a class="button avgas-delivery" target="_blank"
+     href="https://forms.gle/ZFMsCfi7zuPWtfoe6">
+     ⛽ AVGAS 100LL Fuel Delivery Record
+  </a>
+
+  <!-- 3 -->
   <a class="button blue" target="_blank"
      href="https://forms.gle/LEDoAUUqfPH73GAu5">
      🛠 Equipment Request
   </a>
 
+  <!-- 4 -->
   <a class="button orange" target="_blank"
      href="https://forms.gle/PDHTD1JdZRuz3St37">
      ⚠️ Fault Report
   </a>
 
+  <!-- 5 -->
   <a class="button green" target="_blank"
      href="https://forms.gle/kWDjHkJuhV6eNNZA9">
      📝 Leave Request
   </a>
 
+  <!-- 6 -->
   <a class="button yellow" target="_blank"
      href="https://forms.gle/NNwYZCSLVjjhRCBAA">
      ⛽ Fuel Report
@@ -203,7 +220,6 @@ auth.onAuthStateChanged(user => {
   loginBox.classList.add("hidden");
   appBox.classList.remove("hidden");
 
-  // ONLY OWNER sees admin
   if (user.uid === OWNER_UID) {
     adminBtn.classList.remove("hidden");
   } else {
