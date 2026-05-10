@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Safe Sky Alliance</title>
+<title>Safe Sky Hub</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
@@ -81,9 +81,16 @@ button {
   background: linear-gradient(135deg, #475569, #1e293b);
 }
 
-.logo {
-  font-size: 42px;
+/* LOGO */
+
+.logo-img {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
   margin-top: 20px;
+  margin-bottom: 10px;
+  border-radius: 16px;
+  box-shadow: 0 0 25px rgba(37,99,235,0.35);
 }
 
 .subtitle {
@@ -99,12 +106,12 @@ button {
 <!-- LOGIN -->
 <div id="login" class="container">
 
-  <div class="logo">✈️</div>
+  <img src="logofirme.jpg" class="logo-img">
 
-  <h2>Safe Sky Alliance</h2>
+  <h2>Safe Sky Hub</h2>
 
   <div class="subtitle">
-    Internal Operations Portal
+    Login to continue
   </div>
 
   <input id="email" type="email" placeholder="Email">
@@ -118,15 +125,15 @@ button {
 <!-- APP -->
 <div id="app" class="hidden container">
 
-  <div class="logo">✈️</div>
+  <img src="logofirme.jpg" class="logo-img">
 
   <h2>Safe Sky Hub</h2>
 
   <div class="subtitle">
-    Select a report form
+    Select report form
   </div>
 
-  <!-- GOOGLE FORMS -->
+  <!-- FORMS -->
 
   <a class="button blue"
      target="_blank"
@@ -158,11 +165,12 @@ button {
      ⛽ Fuel Report
   </a>
 
-  <!-- ADMIN BUTTON -->
+  <!-- ADMIN -->
+
   <a id="adminBtn"
      class="button admin hidden"
      href="sheets.html">
-     🗂 SECRET ADMIN
+     🗂 Admin Panel
   </a>
 
   <button onclick="logout()">Logout</button>
@@ -183,15 +191,12 @@ firebase.initializeApp({
 
 const auth = firebase.auth();
 
-/* OWNER UID */
 const OWNER_UID = "L1CAgL8P55gz6oztjj5LIY4saYu2";
 
-/* DOM */
 const loginBox = document.getElementById("login");
 const appBox = document.getElementById("app");
 const adminBtn = document.getElementById("adminBtn");
 
-/* LOGIN */
 window.login = async function () {
 
   try {
@@ -199,28 +204,18 @@ window.login = async function () {
     const email = document.getElementById("email").value.trim();
     const pw = document.getElementById("pw").value;
 
-    if (!email || !pw) {
-      alert("Unesi email i password");
-      return;
-    }
-
     await auth.signInWithEmailAndPassword(email, pw);
 
   } catch (err) {
-
-    console.error(err);
     alert(err.message);
-
   }
 
 };
 
-/* LOGOUT */
 window.logout = function () {
   auth.signOut();
 };
 
-/* AUTH STATE */
 auth.onAuthStateChanged(user => {
 
   if (!user) {
@@ -235,18 +230,10 @@ auth.onAuthStateChanged(user => {
   loginBox.classList.add("hidden");
   appBox.classList.remove("hidden");
 
-  /* SHOW ADMIN ONLY TO OWNER */
-
-  if(user.uid === OWNER_UID){
-
-    console.log("OWNER");
+  if (user.uid === OWNER_UID) {
     adminBtn.classList.remove("hidden");
-
   } else {
-
-    console.log("NOT OWNER");
     adminBtn.classList.add("hidden");
-
   }
 
 });
