@@ -12,18 +12,32 @@ body {
   font-family: Inter, sans-serif;
   background: #0f1c2e;
   color: white;
-  display: flex;
-  justify-content: center;
+  margin: 0;
   padding: 20px;
+}
+
+/* LOCK SCREEN */
+#lockScreen {
+  position: fixed;
+  inset: 0;
+  background: #0f1c2e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  z-index: 9999;
+}
+
+/* CONTENT */
+.hidden {
+  display: none;
 }
 
 .container {
   max-width: 1400px;
-  width: 100%;
+  margin: auto;
   text-align: center;
 }
-
-h1 { margin-bottom: 20px; }
 
 table {
   width: 100%;
@@ -59,13 +73,19 @@ button {
 
 <body>
 
-<div class="container">
+<!-- 🔒 LOCK -->
+<div id="lockScreen">
+  Checking access...
+</div>
+
+<!-- APP -->
+<div id="app" class="hidden container">
 
 <h1>✈️ Aerofoto Flight Log</h1>
 
 <div>
   <input type="text" id="aircraft-filter" placeholder="Aircraft">
-  <input type="text" id="pilot-filter" placeholder="Pilot / Copilot">
+  <input type="text" id="pilot-filter" placeholder="Pilot">
   <input type="text" id="company-filter" placeholder="Company">
   <button onclick="applyFilter()">Filter</button>
 </div>
@@ -82,10 +102,10 @@ button {
       <th>Arr ICAO</th>
       <th>Duration</th>
       <th>Mission</th>
+      <th>Company</th>
       <th>Fuel</th>
       <th>Oil</th>
       <th>Notes</th>
-      <th>Company</th>
     </tr>
   </thead>
   <tbody></tbody>
@@ -93,9 +113,11 @@ button {
 
 </div>
 
+<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 
+<!-- PAPAPARSE -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
 
 <script>
@@ -108,17 +130,34 @@ firebase.initializeApp({
 
 const auth = firebase.auth();
 
-/* 🔒 SECURITY GATE */
-auth.onAuthStateChanged(user => {
-  if (!user) {
-    window.location.href = "index.html";
-  }
-});
+const OWNER_UID = "L1CAgL8P55gz6oztjj5LIY4saYu2";
+
+const lock = document.getElementById("lockScreen");
+const app = document.getElementById("app");
 
 const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ63_O7Bwpf9uCQy1UzwjZkotEuJTEFK0rqKSfXUbN_b9ImPM2hGGN3CqfMDZkdjmpMrrgG-z2XfW70/pub?output=csv";
 
 let dataStore = [];
 
+/* 🔐 SECURITY GUARD */
+auth.onAuthStateChanged(user => {
+
+  if (!user) {
+    window.location.href = "index.html";
+    return;
+  }
+
+  if (user.uid !== OWNER_UID) {
+    document.body.innerHTML = "<h2 style='color:white;text-align:center;margin-top:60px'>Access Denied</h2>";
+    return;
+  }
+
+  lock.style.display = "none";
+  app.classList.remove("hidden");
+
+});
+
+/* LOAD DATA */
 Papa.parse(sheetURL, {
   download: true,
   header: true,
@@ -129,8 +168,8 @@ Papa.parse(sheetURL, {
   }
 });
 
-function safe(val) {
-  return val ? val : "";
+function safe(v) {
+  return v || "";
 }
 
 function render(data) {
@@ -152,10 +191,10 @@ function render(data) {
       <td>${safe(row["Arrival Airport (ICAO)"])}</td>
       <td>${safe(row["Total Flight Duration"])}</td>
       <td>${safe(row["Survey Area/Project Name"])}</td>
+      <td>${safe(row["Company Name"])}</td>
       <td>${safe(row["FUEL Uplift before flight"])}</td>
       <td>${safe(row["OIL Uplift before flight"])}</td>
       <td>${safe(row["Comments and Notes (flight or maintenance notes)"])}</td>
-      <td>${safe(row["Company Name"])}</td>
     `;
 
     tbody.appendChild(tr);
@@ -172,19 +211,17 @@ function applyFilter() {
 
     let ok = true;
 
-    if (aircraft) {
+    if (aircraft)
       ok = row["Aircraft Registration"]?.toLowerCase().includes(aircraft);
-    }
 
-    if (pilot) {
-      const pic = row["Pilot in Command (Name code)"]?.toLowerCase() || "";
-      const copilot = row["Copilot (Name code)"]?.toLowerCase() || "";
-      ok = ok && (pic.includes(pilot) || copilot.includes(pilot));
-    }
+    if (pilot)
+      ok = ok && (
+        row["Pilot in Command (Name code)"]?.toLowerCase().includes(pilot) ||
+        row["Copilot (Name code)"]?.toLowerCase().includes(pilot)
+      );
 
-    if (company) {
+    if (company)
       ok = ok && row["Company Name"]?.toLowerCase().includes(company);
-    }
 
     return ok;
   });
