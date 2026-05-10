@@ -94,30 +94,26 @@ button {
 
 <script>
 
-const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-REFUEL-YOUR-LINK/pub?output=csv";
+const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRPLB_IA3YLNuvMFYRWKwam2hipyGN5XWWqmJYZyn1eS9aOEYbwjaER-3HuWxQn_qnKrNVg5z3p5_cT/pub?output=csv";
 
 let sheetData = [];
 
-/* CLEAN KEYS (BOM + spaces fix) */
+/* CLEAN KEYS */
 function cleanKey(key) {
   return key?.trim().replace(/\uFEFF/g, "");
 }
 
-/* DATE PARSER dd.mm.yyyy */
-function parseDMY(str) {
-  if (!str) return null;
+/* CONVERT dd.mm.yyyy -> yyyy-mm-dd (SAFE STRING COMPARE) */
+function normalizeDate(str) {
+  if (!str) return "";
 
-  const parts = str.split(".");
-  if (parts.length !== 3) return null;
+  const p = str.split(".");
+  if (p.length !== 3) return "";
 
-  return new Date(
-    parseInt(parts[2], 10),
-    parseInt(parts[1], 10) - 1,
-    parseInt(parts[0], 10)
-  );
+  return `${p[2]}-${p[1]}-${p[0]}`;
 }
 
-/* LOAD DATA */
+/* LOAD CSV */
 Papa.parse(sheetURL, {
   download: true,
   header: true,
@@ -132,7 +128,7 @@ Papa.parse(sheetURL, {
       return clean;
     });
 
-    console.log("DATA LOADED:", sheetData);
+    console.log("LOADED:", sheetData);
 
     render(sheetData);
   }
@@ -186,22 +182,18 @@ function render(data) {
   });
 }
 
-/* FILTER (FIXED DATE COMPARISON) */
+/* FILTER (FIXED - STRING COMPARISON, NO DATE BUGS) */
 function applyFilter() {
 
   const vehicle = document.getElementById("vehicle-filter").value.toLowerCase();
-  const fromVal = document.getElementById("date-from").value;
-  const toVal = document.getElementById("date-to").value;
-
-  const from = fromVal ? new Date(fromVal).getTime() : null;
-  const to = toVal ? new Date(toVal).getTime() : null;
+  const from = document.getElementById("date-from").value; // yyyy-mm-dd
+  const to = document.getElementById("date-to").value;
 
   const filtered = sheetData.filter(row => {
 
-    const rowDate = parseDMY(row["Date of Refuelling"]);
-    if (!rowDate) return false;
+    const dateStr = normalizeDate(row["Date of Refuelling"]);
 
-    const time = rowDate.getTime();
+    if (!dateStr) return false;
 
     let ok = true;
 
@@ -211,8 +203,8 @@ function applyFilter() {
         .includes(vehicle);
     }
 
-    if (from !== null) ok = ok && time >= from;
-    if (to !== null) ok = ok && time <= to;
+    if (from) ok = ok && dateStr >= from;
+    if (to) ok = ok && dateStr <= to;
 
     return ok;
   });
