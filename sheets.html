@@ -16,6 +16,7 @@ body {
   padding: 0;
 }
 
+/* LOCK */
 #lockScreen {
   position: fixed;
   inset: 0;
@@ -27,6 +28,7 @@ body {
   z-index: 9999;
 }
 
+/* CONTENT */
 .hidden { display: none; }
 
 .container {
@@ -50,12 +52,6 @@ h1 { margin-bottom: 20px; }
   cursor: pointer;
 }
 
-.section {
-  margin-top: 30px;
-  opacity: 0.9;
-  font-size: 14px;
-}
-
 /* MODAL */
 .modal {
   position: fixed;
@@ -65,10 +61,6 @@ h1 { margin-bottom: 20px; }
   align-items: center;
   justify-content: center;
   z-index: 9999;
-}
-
-.modal.show {
-  display: flex;
 }
 
 .modal-content {
@@ -137,20 +129,26 @@ h1 { margin-bottom: 20px; }
 
 <script>
 
+/* SCRIPT URL */
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw4tk_GQrs_KFABInbpKjekVAeVYUlcdHmXYUjJbSNqObYcDWJVFk23s4E6SuQt7Pfk1Q/exec";
+
+/* DOM */
+const lockScreen = document.getElementById("lockScreen");
+const content = document.getElementById("content");
+const modal = document.getElementById("fuelModal");
 
 /* OPEN / CLOSE MODAL */
 function openFuelForm() {
-  document.getElementById("fuelModal").classList.add("show");
+  modal.style.display = "flex";
 }
 
 function closeFuelForm() {
-  document.getElementById("fuelModal").classList.remove("show");
+  modal.style.display = "none";
 }
 
 /* CLOSE ON BACKDROP */
-document.getElementById("fuelModal").addEventListener("click", function(e) {
-  if (e.target === this) closeFuelForm();
+modal.addEventListener("click", function(e) {
+  if (e.target === modal) closeFuelForm();
 });
 
 /* SUBMIT */
@@ -179,7 +177,7 @@ async function submitFuel() {
     });
 
     const text = await res.text();
-    console.log("SERVER RESPONSE:", text);
+    console.log("SERVER:", text);
 
     alert("Fuel saved!");
 
@@ -195,6 +193,12 @@ async function submitFuel() {
     alert("Error sending data");
   }
 }
+
+/* TEMP SIMPLE ACCESS (bez Firebase da ne blokira UI) */
+window.onload = function() {
+  lockScreen.style.display = "none";
+  content.classList.remove("hidden");
+};
 
 </script>
 
