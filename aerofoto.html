@@ -65,8 +65,8 @@ button {
 
 <div>
   <input type="text" id="aircraft-filter" placeholder="Aircraft">
-  <input type="text" id="pilot-filter" placeholder="Pilot">
-  <input type="text" id="mission-filter" placeholder="Mission">
+  <input type="text" id="pilot-filter" placeholder="Pilot / Copilot">
+  <input type="text" id="company-filter" placeholder="Company">
   <button onclick="applyFilter()">Filter</button>
 </div>
 
@@ -97,7 +97,8 @@ button {
 
 <script>
 
-const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ63_O7Bwpf9uCQy1UzwjZkotEuJTEFK0rqKSfXUbN_b9ImPM2hGGN3CqfMDZkdjmpMrrgG-z2XfW70/pub?output=csv";
+const sheetURL =
+"https://docs.google.com/spreadsheets/d/e/2PACX-1vQ63_O7Bwpf9uCQy1UzwjZkotEuJTEFK0rqKSfXUbN_b9ImPM2hGGN3CqfMDZkdjmpMrrgG-z2XfW70/pub?output=csv";
 
 let dataStore = [];
 
@@ -106,7 +107,6 @@ Papa.parse(sheetURL, {
   header: true,
   skipEmptyLines: true,
   complete: function(results) {
-
     dataStore = results.data.filter(r => r["Date of Flight"]);
     render(dataStore);
   }
@@ -149,20 +149,26 @@ function applyFilter() {
 
   const aircraft = document.getElementById("aircraft-filter").value.toLowerCase();
   const pilot = document.getElementById("pilot-filter").value.toLowerCase();
-  const mission = document.getElementById("mission-filter").value.toLowerCase();
+  const company = document.getElementById("company-filter").value.toLowerCase();
 
   const filtered = dataStore.filter(row => {
 
     let ok = true;
 
-    if (aircraft)
+    if (aircraft) {
       ok = row["Aircraft Registration"]?.toLowerCase().includes(aircraft);
+    }
 
-    if (pilot)
-      ok = ok && row["Pilot in Command (Name code)"]?.toLowerCase().includes(pilot);
+    if (pilot) {
+      const pic = row["Pilot in Command (Name code)"]?.toLowerCase() || "";
+      const copilot = row["Copilot (Name code)"]?.toLowerCase() || "";
 
-    if (mission)
-      ok = ok && row["Survey Area/Project Name"]?.toLowerCase().includes(mission);
+      ok = ok && (pic.includes(pilot) || copilot.includes(pilot));
+    }
+
+    if (company) {
+      ok = ok && row["Company Name"]?.toLowerCase().includes(company);
+    }
 
     return ok;
   });
