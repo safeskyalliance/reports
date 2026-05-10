@@ -61,25 +61,11 @@ button {
 
 /* COLORS */
 
-.blue {
-  background: linear-gradient(135deg, #2563eb, #1e40af);
-}
-
-.orange {
-  background: linear-gradient(135deg, #f97316, #c2410c);
-}
-
-.green {
-  background: linear-gradient(135deg, #22c55e, #15803d);
-}
-
-.yellow {
-  background: linear-gradient(135deg, #e0c060, #c9b04f);
-}
-
-.admin {
-  background: linear-gradient(135deg, #475569, #1e293b);
-}
+.blue { background: linear-gradient(135deg, #2563eb, #1e40af); }
+.orange { background: linear-gradient(135deg, #f97316, #c2410c); }
+.green { background: linear-gradient(135deg, #22c55e, #15803d); }
+.yellow { background: linear-gradient(135deg, #e0c060, #c9b04f); }
+.admin { background: linear-gradient(135deg, #475569, #1e293b); }
 
 /* LOGO */
 
@@ -115,7 +101,6 @@ button {
   </div>
 
   <input id="email" type="email" placeholder="Email">
-
   <input id="pw" type="password" placeholder="Password">
 
   <button onclick="login()">Login</button>
@@ -133,40 +118,32 @@ button {
     Select report form
   </div>
 
-  <!-- FORMS -->
-
-  <a class="button blue"
-     target="_blank"
+  <a class="button blue" target="_blank"
      href="https://docs.google.com/forms/d/e/1FAIpQLScgHExmEVdK-I0OZ8AnA3uJ0ASJPoEe_eNW32ugQ5lpcx-p4Q/viewform">
      ✈️ Aerophoto Report
   </a>
 
-  <a class="button blue"
-     target="_blank"
+  <a class="button blue" target="_blank"
      href="https://forms.gle/LEDoAUUqfPH73GAu5">
      🛠 Equipment Request
   </a>
 
-  <a class="button orange"
-     target="_blank"
+  <a class="button orange" target="_blank"
      href="https://forms.gle/PDHTD1JdZRuz3St37">
      ⚠️ Fault Report
   </a>
 
-  <a class="button green"
-     target="_blank"
+  <a class="button green" target="_blank"
      href="https://forms.gle/kWDjHkJuhV6eNNZA9">
      📝 Leave Request
   </a>
 
-  <a class="button yellow"
-     target="_blank"
+  <a class="button yellow" target="_blank"
      href="https://forms.gle/NNwYZCSLVjjhRCBAA">
      ⛽ Fuel Report
   </a>
 
   <!-- ADMIN -->
-
   <a id="adminBtn"
      class="button admin hidden"
      href="sheets.html">
@@ -200,7 +177,6 @@ const adminBtn = document.getElementById("adminBtn");
 window.login = async function () {
 
   try {
-
     const email = document.getElementById("email").value.trim();
     const pw = document.getElementById("pw").value;
 
@@ -209,7 +185,6 @@ window.login = async function () {
   } catch (err) {
     alert(err.message);
   }
-
 };
 
 window.logout = function () {
@@ -219,17 +194,16 @@ window.logout = function () {
 auth.onAuthStateChanged(user => {
 
   if (!user) {
-
     loginBox.classList.remove("hidden");
     appBox.classList.add("hidden");
     adminBtn.classList.add("hidden");
-
     return;
   }
 
   loginBox.classList.add("hidden");
   appBox.classList.remove("hidden");
 
+  // ONLY OWNER sees admin
   if (user.uid === OWNER_UID) {
     adminBtn.classList.remove("hidden");
   } else {
