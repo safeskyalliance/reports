@@ -112,15 +112,9 @@ h1 {
 
   <div class="section">📊 LIVE SYSTEMS</div>
 
-  <a class="button" href="aerofoto.html">
-    ✈️ Aerofoto Live Report
-  </a>
+  <a class="button" href="aerofoto.html">✈️ Aerofoto Live Report</a>
+  <a class="button" href="refuelling.html">⛽ Refuelling Live Report</a>
 
-  <a class="button" href="refuelling.html">
-    ⛽ Refuelling Live Report
-  </a>
-
-  <!-- ⛽ FUEL ADMIN BUTTON -->
   <div class="section">⛽ FUEL MANAGEMENT</div>
 
   <div class="button" onclick="openFuelForm()">
@@ -129,13 +123,11 @@ h1 {
 
   <div class="section">📁 GOOGLE SHEETS REPORTS</div>
 
-  <a class="button" target="_blank"
-     href="https://docs.google.com/spreadsheets/d/e/YOUR_AEROFOTO_ID/pubhtml">
+  <a class="button" target="_blank" href="#">
     ✈️ Aerofoto Sheet Report
   </a>
 
-  <a class="button" target="_blank"
-     href="https://docs.google.com/spreadsheets/d/e/YOUR_REFUEL_ID/pubhtml">
+  <a class="button" target="_blank" href="#">
     ⛽ Refuelling Sheet Report
   </a>
 
@@ -149,7 +141,15 @@ h1 {
     <h2>⛽ Fuel Admin Entry</h2>
 
     <input id="fuelDate" type="date" class="input">
-    <input id="fuelCompany" type="text" placeholder="Company" class="input">
+
+    <!-- DROPDOWN FIX -->
+    <select id="fuelCompany" class="input">
+      <option value="">Select Company</option>
+      <option value="Topgeo">Topgeo</option>
+      <option value="Ekosan">Ekosan</option>
+      <option value="Ciklonizacija">Ciklonizacija</option>
+    </select>
+
     <input id="fuelQuantity" type="number" placeholder="Quantity (L)" class="input">
     <input id="fuelPerson" type="text" placeholder="Responsible Person" class="input">
 
@@ -176,10 +176,9 @@ const auth = firebase.auth();
 
 const OWNER_UID = "L1CAgL8P55gz6oztjj5LIY4saYu2";
 
-/* 🔥 YOUR GOOGLE SCRIPT URL */
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw4tk_GQrs_KFABInbpKjekVAeVYUlcdHmXYUjJbSNqObYcDWJVFk23s4E6SuQt7Pfk1Q/exec";
 
-/* AUTH */
+/* FIX: prevent undefined crash */
 auth.onAuthStateChanged(user => {
 
   if (!user) {
@@ -192,12 +191,17 @@ auth.onAuthStateChanged(user => {
     return;
   }
 
-  lockScreen.style.display = "none";
-  content.classList.remove("hidden");
+  document.getElementById("lockScreen").style.display = "none";
+  document.getElementById("content").classList.remove("hidden");
 
 });
 
-/* MODAL CONTROLS */
+/* ensure modal starts hidden */
+document.addEventListener("DOMContentLoaded", function () {
+  document.getElementById("fuelModal").classList.add("hidden");
+});
+
+/* MODAL */
 function openFuelForm() {
   document.getElementById("fuelModal").classList.remove("hidden");
 }
@@ -206,7 +210,7 @@ function closeFuelForm() {
   document.getElementById("fuelModal").classList.add("hidden");
 }
 
-/* SUBMIT FUEL */
+/* SUBMIT */
 async function submitFuel() {
 
   const payload = {
