@@ -82,11 +82,10 @@ button {
       <th>Arr ICAO</th>
       <th>Duration</th>
       <th>Mission</th>
-      <th>Weather</th>
-      <th>CRM</th>
       <th>Fuel</th>
       <th>Oil</th>
       <th>Notes</th>
+      <th>Company</th>
     </tr>
   </thead>
   <tbody></tbody>
@@ -108,11 +107,7 @@ Papa.parse(sheetURL, {
   skipEmptyLines: true,
   complete: function(results) {
 
-    console.log("RAW DATA:", results.data);
-
-    // filter prazne redove
     dataStore = results.data.filter(r => r["Date of Flight"]);
-
     render(dataStore);
   }
 });
@@ -140,11 +135,10 @@ function render(data) {
       <td>${safe(row["Arrival Airport (ICAO)"])}</td>
       <td>${safe(row["Total Flight Duration"])}</td>
       <td>${safe(row["Survey Area/Project Name"])}</td>
-      <td>${safe(row["Weather Conditions Encountered"])}</td>
-      <td>${safe(row["Flight Quality Rating (CRM)"])}</td>
       <td>${safe(row["FUEL Uplift before flight"])}</td>
       <td>${safe(row["OIL Uplift before flight"])}</td>
       <td>${safe(row["Comments and Notes (flight or maintenance notes)"])}</td>
+      <td>${safe(row["Company Name"])}</td>
     `;
 
     tbody.appendChild(tr);
