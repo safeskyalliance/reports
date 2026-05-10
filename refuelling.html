@@ -22,7 +22,9 @@ body {
   text-align: center;
 }
 
-h1 { margin-bottom: 20px; }
+h1 {
+  margin-bottom: 20px;
+}
 
 table {
   width: 100%;
@@ -96,7 +98,7 @@ const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-REFUEL-YOUR-LIN
 
 let sheetData = [];
 
-/* CLEAN HEADER KEYS (FIX 90% BUGOVA) */
+/* CLEAN KEYS (BOM + spaces fix) */
 function cleanKey(key) {
   return key?.trim().replace(/\uFEFF/g, "");
 }
@@ -122,7 +124,6 @@ Papa.parse(sheetURL, {
   skipEmptyLines: true,
   complete: function(results) {
 
-    // normalize keys
     sheetData = results.data.map(row => {
       const clean = {};
       Object.keys(row).forEach(k => {
@@ -131,7 +132,7 @@ Papa.parse(sheetURL, {
       return clean;
     });
 
-    console.log("LOADED DATA:", sheetData);
+    console.log("DATA LOADED:", sheetData);
 
     render(sheetData);
   }
@@ -185,17 +186,22 @@ function render(data) {
   });
 }
 
-/* FILTER */
+/* FILTER (FIXED DATE COMPARISON) */
 function applyFilter() {
 
   const vehicle = document.getElementById("vehicle-filter").value.toLowerCase();
-  const from = document.getElementById("date-from").value;
-  const to = document.getElementById("date-to").value;
+  const fromVal = document.getElementById("date-from").value;
+  const toVal = document.getElementById("date-to").value;
+
+  const from = fromVal ? new Date(fromVal).getTime() : null;
+  const to = toVal ? new Date(toVal).getTime() : null;
 
   const filtered = sheetData.filter(row => {
 
     const rowDate = parseDMY(row["Date of Refuelling"]);
     if (!rowDate) return false;
+
+    const time = rowDate.getTime();
 
     let ok = true;
 
@@ -205,8 +211,8 @@ function applyFilter() {
         .includes(vehicle);
     }
 
-    if (from) ok = ok && rowDate >= new Date(from);
-    if (to) ok = ok && rowDate <= new Date(to);
+    if (from !== null) ok = ok && time >= from;
+    if (to !== null) ok = ok && time <= to;
 
     return ok;
   });
