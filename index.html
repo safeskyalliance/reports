@@ -18,7 +18,7 @@ body {
 }
 
 .hidden {
-  display: none;
+  display: none !important;
 }
 
 .container {
@@ -81,6 +81,16 @@ button {
   background: linear-gradient(135deg, #475569, #1e293b);
 }
 
+.logo {
+  font-size: 42px;
+  margin-top: 20px;
+}
+
+.subtitle {
+  color: #94a3b8;
+  margin-bottom: 25px;
+}
+
 </style>
 </head>
 
@@ -89,7 +99,13 @@ button {
 <!-- LOGIN -->
 <div id="login" class="container">
 
-  <h2>Login</h2>
+  <div class="logo">✈️</div>
+
+  <h2>Safe Sky Hub</h2>
+
+  <div class="subtitle">
+    Internal Operations Portal
+  </div>
 
   <input id="email" type="email" placeholder="Email">
 
@@ -102,7 +118,13 @@ button {
 <!-- APP -->
 <div id="app" class="hidden container">
 
-  <h2>✈️ Safe Sky Hub</h2>
+  <div class="logo">✈️</div>
+
+  <h2>Safe Sky Hub</h2>
+
+  <div class="subtitle">
+    Select a report form
+  </div>
 
   <!-- GOOGLE FORMS -->
 
@@ -140,7 +162,7 @@ button {
   <a id="adminBtn"
      class="button admin hidden"
      href="sheets.html">
-     🗂 Admin Panel
+     🗂 SECRET ADMIN
   </a>
 
   <button onclick="logout()">Logout</button>
@@ -214,10 +236,17 @@ auth.onAuthStateChanged(user => {
   appBox.classList.remove("hidden");
 
   /* SHOW ADMIN ONLY TO OWNER */
+
   if(user.uid === OWNER_UID){
+
+    console.log("OWNER");
     adminBtn.classList.remove("hidden");
+
   } else {
+
+    console.log("NOT OWNER");
     adminBtn.classList.add("hidden");
+
   }
 
 });
