@@ -23,9 +23,60 @@ body {
 }
 
 h1 {
-  margin-bottom: 20px;
+  margin-bottom: 25px;
 }
 
+/* FILTER BAR */
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+/* GROUP (label + input) */
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 160px;
+}
+
+.label {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-bottom: 4px;
+}
+
+/* INPUT STYLE */
+input {
+  width: 160px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  background: #1e2a45;
+  color: white;
+}
+
+input::placeholder {
+  color: #94a3b8;
+}
+
+/* BUTTON */
+button {
+  padding: 10px 14px;
+  margin-top: 18px;
+  border-radius: 8px;
+  border: none;
+  background: #2563eb;
+  color: white;
+  cursor: pointer;
+  height: 40px;
+}
+
+/* TABLE */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -42,19 +93,6 @@ th, td {
 th {
   background: #1e2a45;
 }
-
-input, button {
-  padding: 6px;
-  margin: 5px;
-  border-radius: 6px;
-  border: none;
-}
-
-button {
-  background: #2563eb;
-  color: white;
-  cursor: pointer;
-}
 </style>
 </head>
 
@@ -64,11 +102,25 @@ button {
 
 <h1>⛽ Refuelling Live</h1>
 
-<div>
-  <input type="text" id="vehicle-filter" placeholder="Vehicle">
-  <input type="date" id="date-from">
-  <input type="date" id="date-to">
+<div class="filters">
+
+  <div class="filter-group">
+    <div class="label">Vehicle</div>
+    <input type="text" id="vehicle-filter" placeholder="Enter vehicle">
+  </div>
+
+  <div class="filter-group">
+    <div class="label">From date</div>
+    <input type="date" id="date-from">
+  </div>
+
+  <div class="filter-group">
+    <div class="label">To date</div>
+    <input type="date" id="date-to">
+  </div>
+
   <button onclick="applyFilter()">Filter</button>
+
 </div>
 
 <table>
@@ -98,7 +150,7 @@ const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRPLB_IA3YLNuv
 
 let sheetData = [];
 
-/* CLEAN + LOAD */
+/* LOAD */
 Papa.parse(sheetURL, {
   download: true,
   header: true,
@@ -109,11 +161,11 @@ Papa.parse(sheetURL, {
   }
 });
 
-/* 🔥 FIXED DATE PARSER */
+/* DATE FIX */
 function toISO(dateStr) {
   if (!dateStr) return null;
 
-  dateStr = dateStr.trim().replace(/\.$/, ""); // uklanja trailing dot
+  dateStr = dateStr.trim().replace(/\.$/, "");
 
   const p = dateStr.split(".");
   if (p.length < 3) return null;
@@ -125,7 +177,7 @@ function toISO(dateStr) {
   return `${year}-${month}-${day}`;
 }
 
-/* RENDER TABLE */
+/* RENDER */
 function render(data) {
 
   const tbody = document.querySelector("tbody");
@@ -168,7 +220,7 @@ function render(data) {
   });
 }
 
-/* 🔥 FILTER (SAFE DATE COMPARE) */
+/* FILTER */
 function applyFilter() {
 
   const vehicleInput = document.getElementById("vehicle-filter").value.toLowerCase().trim();
