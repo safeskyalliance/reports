@@ -4,181 +4,190 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Refuelling Live Data</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: Inter, sans-serif;
   background: #0f1c2e;
   color: white;
-  display: flex;
-  justify-content: center;
+  margin: 0;
   padding: 20px;
 }
 
 .container {
-  max-width: 1000px;
-  width: 100%;
+  max-width: 1100px;
+  margin: auto;
   text-align: center;
 }
 
-h1 { font-size: 26px; margin-bottom: 20px; }
+h1 {
+  margin-bottom: 20px;
+}
 
 table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
-  color: white;
+  font-size: 13px;
 }
 
-table th, table td {
-  border: 1px solid #555;
+th, td {
+  border: 1px solid #444;
   padding: 8px;
   text-align: center;
 }
 
-table th {
-  background-color: #1e2a45;
+th {
+  background: #1e2a45;
 }
 
 input, button {
+  padding: 6px;
   margin: 5px;
-  padding: 5px;
-  border-radius: 5px;
+  border-radius: 6px;
   border: none;
 }
 
-button#apply-filter {
-  background-color: #2563eb;
+button {
+  background: #2563eb;
   color: white;
   cursor: pointer;
-  font-weight: 600;
 }
 </style>
 </head>
+
 <body>
 
 <div class="container">
-  <h1>Refuelling Live Data</h1>
 
-  <div>
-    <label>Vehicle: <input type="text" id="vehicle-filter" placeholder="Unesi reg. broj"></label>
-    <label>From: <input type="date" id="date-from"></label>
-    <label>To: <input type="date" id="date-to"></label>
-    <button id="apply-filter">Apply Filter</button>
-  </div>
+<h1>⛽ Refuelling Live Data</h1>
 
-  <table id="data-table">
-    <thead>
-      <tr>
-        <th>Date</th>
-        <th>Vehicle</th>
-        <th>Quantity (L)</th>
-        <th>Cost (RSD)</th>
-        <th>Odometer</th>
-        <th>Notes</th>
-        <th>Consumption (L/100km)</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+<div>
+  <label>Vehicle:
+    <input type="text" id="vehicle-filter" placeholder="Reg. broj">
+  </label>
+
+  <label>From:
+    <input type="date" id="date-from">
+  </label>
+
+  <label>To:
+    <input type="date" id="date-to">
+  </label>
+
+  <button onclick="applyFilter()">Apply Filter</button>
+</div>
+
+<table id="data-table">
+  <thead>
+    <tr>
+      <th>Date</th>
+      <th>Vehicle</th>
+      <th>Quantity (L)</th>
+      <th>Cost</th>
+      <th>Odometer</th>
+      <th>Notes</th>
+      <th>Consumption</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
 
 <script>
-const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRPLB_IA3YLNuvMFYRWKwam2hipyGN5XWWqmJYZyn1eS9aOEYbwjaER-3HuWxQn_qnKrNVg5z3p5_cT/pub?gid=1958934267&single=true&output=csv";
+
+const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-REFUEL-YOUR-LINK/pub?output=csv";
 
 let sheetData = [];
 
+/* 🔥 FIX: parse dd.mm.yyyy */
+function parseDMY(dateStr) {
+  if (!dateStr) return null;
+
+  const parts = dateStr.split(".");
+  if (parts.length !== 3) return null;
+
+  const day = parseInt(parts[0], 10);
+  const month = parseInt(parts[1], 10) - 1;
+  const year = parseInt(parts[2], 10);
+
+  return new Date(year, month, day);
+}
+
+/* LOAD DATA */
 Papa.parse(sheetURL, {
   download: true,
   header: true,
+  skipEmptyLines: true,
   complete: function(results) {
-    sheetData = results.data;
-    sortData(sheetData);
-    renderTable(sheetData);
+    sheetData = results.data.filter(r => r["Date of Refuelling"]);
+    render(sheetData);
   }
 });
 
-function sortData(data) {
-  data.sort((a, b) => {
-    const vehicleA = a["Vehicle Registration Number (License Plate)"];
-    const vehicleB = b["Vehicle Registration Number (License Plate)"];
+/* RENDER */
+function render(data) {
 
-    if (vehicleA < vehicleB) return -1;
-    if (vehicleA > vehicleB) return 1;
-
-    return new Date(a["Date of Refuelling"]) - new Date(b["Date of Refuelling"]);
-  });
-}
-
-function renderTable(data) {
   const tbody = document.querySelector("#data-table tbody");
   tbody.innerHTML = "";
 
-  let lastOdometerByVehicle = {};
-
   data.forEach(row => {
 
-    const vehicle = row["Vehicle Registration Number (License Plate)"];
-    const currentOdometer = parseFloat(
-  row["Odometer Reading (Kilometers)"]?.replace(",", ".")
-);
-
-const quantity = parseFloat(
-  row["Total Quantity (Liters)"]?.replace(",", ".")
-);
-
-    let consumption = "-";
-
-    if (lastOdometerByVehicle[vehicle] && currentOdometer && quantity) {
-      const previousOdometer = lastOdometerByVehicle[vehicle];
-      const distance = currentOdometer - previousOdometer;
-
-      if (distance > 0) {
-        consumption = ((quantity / distance) * 100).toFixed(2);
-      }
-    }
-
-    lastOdometerByVehicle[vehicle] = currentOdometer;
-
     const tr = document.createElement("tr");
+
     tr.innerHTML = `
-      <td>${row["Date of Refuelling"]}</td>
-      <td>${vehicle}</td>
-      <td>${quantity ? quantity.toLocaleString('sr-RS', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : ""}</td>
-      <td>${row["Total Cost of Refuelling (Currency: RSD)"]}</td>
-      <td>${currentOdometer}</td>
-      <td>${row["Additional Notes/Comments"]}</td>
-      <td>${consumption}</td>
+      <td>${row["Date of Refuelling"] || ""}</td>
+      <td>${row["Vehicle Registration Number (License Plate)"] || ""}</td>
+      <td>${row["Total Quantity (Liters)"] || ""}</td>
+      <td>${row["Total Cost of Refuelling (Currency: RSD)"] || ""}</td>
+      <td>${row["Odometer Reading (Kilometers)"] || ""}</td>
+      <td>${row["Additional Notes/Comments"] || ""}</td>
+      <td>-</td>
     `;
+
     tbody.appendChild(tr);
   });
 }
 
-document.getElementById("apply-filter").addEventListener("click", () => {
-  const vehicle = document.getElementById("vehicle-filter").value.trim().toLowerCase();
+/* FILTER */
+function applyFilter() {
+
+  const vehicle = document.getElementById("vehicle-filter").value.toLowerCase();
   const from = document.getElementById("date-from").value;
   const to = document.getElementById("date-to").value;
 
   const filtered = sheetData.filter(row => {
-    const rowDate = row["Date of Refuelling"];
-    const rowVehicle = row["Vehicle Registration Number (License Plate)"].toLowerCase();
 
-    let dateOk = true;
-    let vehicleOk = true;
+    const rowDate = parseDMY(row["Date of Refuelling"]);
+    if (!rowDate) return false;
 
-    if (from) dateOk = new Date(rowDate) >= new Date(from);
-    if (to) dateOk = dateOk && new Date(rowDate) <= new Date(to);
-    if (vehicle) vehicleOk = rowVehicle.includes(vehicle);
+    let ok = true;
 
-    return dateOk && vehicleOk;
+    if (vehicle) {
+      ok = row["Vehicle Registration Number (License Plate)"]
+        ?.toLowerCase()
+        .includes(vehicle);
+    }
+
+    if (from) {
+      ok = ok && rowDate >= new Date(from);
+    }
+
+    if (to) {
+      ok = ok && rowDate <= new Date(to);
+    }
+
+    return ok;
   });
 
-  sortData(filtered);
-  renderTable(filtered);
-});
+  render(filtered);
+}
+
 </script>
 
 </body>
