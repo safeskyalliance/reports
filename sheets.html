@@ -5,9 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin Panel</title>
 
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
 <style>
 body {
-  font-family: Inter, Arial, sans-serif;
+  font-family: Inter, sans-serif;
   background: #0f1c2e;
   color: white;
   margin: 0;
@@ -25,7 +27,7 @@ body {
 }
 
 /* LAYOUT */
-.hidden { display: none; }
+.hidden { display: none !important; }
 
 .container {
   max-width: 900px;
@@ -36,29 +38,27 @@ body {
 
 .section {
   margin-top: 25px;
-  font-size: 13px;
-  opacity: 0.7;
+  opacity: 0.8;
+  font-size: 14px;
 }
 
-/* BUTTONS */
+/* BUTTON */
 .button {
   display: block;
   padding: 14px;
   margin: 10px 0;
-  background: linear-gradient(135deg, #2563eb, #1e40af);
+  background: #2563eb;
   border-radius: 12px;
   cursor: pointer;
   font-weight: 600;
-  text-decoration: none;
-  color: white;
 }
 
-/* SPECIAL BUTTON */
-.button.green {
-  background: linear-gradient(135deg, #22c55e, #15803d);
+/* GREEN BUTTON */
+.green {
+  background: linear-gradient(135deg,#22c55e,#15803d);
 }
 
-/* MODAL */
+/* MODAL (FIXED VERSION — NO BUGS) */
 .modal {
   position: fixed;
   inset: 0;
@@ -66,63 +66,43 @@ body {
   display: none;
   align-items: center;
   justify-content: center;
+  z-index: 9999;
 }
 
 .modal.show {
   display: flex;
 }
 
-/* CARD LOOK (IMPORTANT FIX) */
 .modal-box {
   background: #111c2e;
-  padding: 25px;
-  border-radius: 18px;
+  padding: 22px;
+  border-radius: 16px;
   width: 90%;
   max-width: 420px;
-  box-shadow: 0 25px 60px rgba(0,0,0,0.5);
-  text-align: center;
 }
 
-.modal-box h2 {
-  margin-bottom: 15px;
-}
-
-/* INPUTS LOOK GOOD */
 .input {
   width: 100%;
   padding: 12px;
   margin: 8px 0;
   border-radius: 10px;
-  border: 1px solid rgba(255,255,255,0.1);
+  border: none;
   background: #0f1c2e;
   color: white;
-  outline: none;
 }
 
-.input:focus {
-  border-color: #2563eb;
-}
-
-/* BUTTONS */
+/* ACTION BUTTONS */
 .btn {
   width: 100%;
   padding: 12px;
-  margin-top: 10px;
   border-radius: 10px;
   border: none;
-  font-weight: 600;
+  margin-top: 10px;
   cursor: pointer;
 }
 
-.btn.primary {
-  background: #2563eb;
-  color: white;
-}
-
-.btn.secondary {
-  background: #334155;
-  color: white;
-}
+.primary { background: #2563eb; color: white; }
+.secondary { background: #334155; color: white; }
 </style>
 </head>
 
@@ -132,22 +112,20 @@ body {
 <div id="lockScreen">Checking access...</div>
 
 <!-- APP -->
-<div id="app" class="hidden container">
+<div id="content" class="hidden container">
 
   <h1>🗂 Admin Panel</h1>
 
-  <!-- SYSTEMS -->
   <div class="section">📊 LIVE SYSTEMS</div>
 
-  <a class="button" href="aerofoto.html">
+  <div class="button" onclick="window.location.href='aerofoto.html'">
     ✈️ Aerofoto Live Report
-  </a>
+  </div>
 
-  <a class="button" href="refuelling.html">
+  <div class="button" onclick="window.location.href='refuelling.html'">
     ⛽ Refuelling Live Report
-  </a>
+  </div>
 
-  <!-- FUEL -->
   <div class="section">⛽ FUEL MANAGEMENT</div>
 
   <div class="button green" onclick="openFuel()">
@@ -197,7 +175,8 @@ firebase.initializeApp({
 const auth = firebase.auth();
 const OWNER_UID = "L1CAgL8P55gz6oztjj5LIY4saYu2";
 
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw4tk_GQrs_KFABInbpKjekVAeVYUlcdHmXYUjJbSNqObYcDWJVFk23s4E6SuQt7Pfk1Q/exec";
+const SCRIPT_URL =
+"https://script.google.com/macros/s/AKfycbw4tk_GQrs_KFABInbpKjekVAeVYUlcdHmXYUjJbSNqObYcDWJVFk23s4E6SuQt7Pfk1Q/exec";
 
 /* AUTH */
 auth.onAuthStateChanged(user => {
@@ -208,11 +187,11 @@ auth.onAuthStateChanged(user => {
   }
 
   document.getElementById("lockScreen").style.display = "none";
-  document.getElementById("app").classList.remove("hidden");
+  document.getElementById("content").classList.remove("hidden");
 
 });
 
-/* OPEN / CLOSE */
+/* MODAL */
 function openFuel() {
   document.getElementById("modal").classList.add("show");
 }
@@ -221,7 +200,7 @@ function closeFuel() {
   document.getElementById("modal").classList.remove("show");
 }
 
-/* BACKDROP CLOSE */
+/* CLICK OUTSIDE */
 document.getElementById("modal").addEventListener("click", e => {
   if (e.target.id === "modal") closeFuel();
 });
@@ -230,14 +209,14 @@ document.getElementById("modal").addEventListener("click", e => {
 async function submitFuel() {
 
   const payload = {
-    date: document.getElementById("date").value,
-    company: document.getElementById("company").value,
-    quantity: document.getElementById("qty").value,
-    person: document.getElementById("person").value
+    date: date.value,
+    company: company.value,
+    quantity: qty.value,
+    person: person.value
   };
 
   if (!payload.date || !payload.company || !payload.quantity || !payload.person) {
-    alert("Fill all fields!");
+    alert("Fill all fields");
     return;
   }
 
@@ -250,10 +229,10 @@ async function submitFuel() {
 
   closeFuel();
 
-  document.getElementById("date").value = "";
-  document.getElementById("company").value = "";
-  document.getElementById("qty").value = "";
-  document.getElementById("person").value = "";
+  date.value = "";
+  company.value = "";
+  qty.value = "";
+  person.value = "";
 }
 
 </script>
