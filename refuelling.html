@@ -17,7 +17,7 @@ body {
 }
 
 .container {
-  max-width: 1100px;
+  max-width: 1200px;
   margin: auto;
   text-align: center;
 }
@@ -65,31 +65,23 @@ button {
 <h1>⛽ Refuelling Live Data</h1>
 
 <div>
-  <label>Vehicle:
-    <input type="text" id="vehicle-filter" placeholder="Reg. broj">
-  </label>
-
-  <label>From:
-    <input type="date" id="date-from">
-  </label>
-
-  <label>To:
-    <input type="date" id="date-to">
-  </label>
-
-  <button onclick="applyFilter()">Apply Filter</button>
+  <input type="text" id="vehicle-filter" placeholder="Vehicle">
+  <input type="date" id="date-from">
+  <input type="date" id="date-to">
+  <button onclick="applyFilter()">Filter</button>
 </div>
 
-<table id="data-table">
+<table>
   <thead>
     <tr>
       <th>Date</th>
+      <th>Employee</th>
       <th>Vehicle</th>
+      <th>Fuel Type</th>
       <th>Quantity (L)</th>
-      <th>Cost</th>
+      <th>Cost (RSD)</th>
       <th>Odometer</th>
       <th>Notes</th>
-      <th>Consumption</th>
     </tr>
   </thead>
   <tbody></tbody>
@@ -105,18 +97,18 @@ const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-REFUEL-YOUR-LIN
 
 let sheetData = [];
 
-/* 🔥 FIX: parse dd.mm.yyyy */
-function parseDMY(dateStr) {
-  if (!dateStr) return null;
+/* FIX: dd.mm.yyyy parser */
+function parseDMY(str) {
+  if (!str) return null;
 
-  const parts = dateStr.split(".");
+  const parts = str.split(".");
   if (parts.length !== 3) return null;
 
-  const day = parseInt(parts[0], 10);
-  const month = parseInt(parts[1], 10) - 1;
-  const year = parseInt(parts[2], 10);
-
-  return new Date(year, month, day);
+  return new Date(
+    parseInt(parts[2], 10),
+    parseInt(parts[1], 10) - 1,
+    parseInt(parts[0], 10)
+  );
 }
 
 /* LOAD DATA */
@@ -125,7 +117,11 @@ Papa.parse(sheetURL, {
   header: true,
   skipEmptyLines: true,
   complete: function(results) {
+
+    console.log("DATA:", results.data);
+
     sheetData = results.data.filter(r => r["Date of Refuelling"]);
+
     render(sheetData);
   }
 });
@@ -133,7 +129,7 @@ Papa.parse(sheetURL, {
 /* RENDER */
 function render(data) {
 
-  const tbody = document.querySelector("#data-table tbody");
+  const tbody = document.querySelector("tbody");
   tbody.innerHTML = "";
 
   data.forEach(row => {
@@ -142,12 +138,13 @@ function render(data) {
 
     tr.innerHTML = `
       <td>${row["Date of Refuelling"] || ""}</td>
+      <td>${row["Employee Full Name"] || ""}</td>
       <td>${row["Vehicle Registration Number (License Plate)"] || ""}</td>
+      <td>${row["Type of Fuel Purchased"] || ""}</td>
       <td>${row["Total Quantity (Liters)"] || ""}</td>
       <td>${row["Total Cost of Refuelling (Currency: RSD)"] || ""}</td>
       <td>${row["Odometer Reading (Kilometers)"] || ""}</td>
       <td>${row["Additional Notes/Comments"] || ""}</td>
-      <td>-</td>
     `;
 
     tbody.appendChild(tr);
@@ -174,13 +171,8 @@ function applyFilter() {
         .includes(vehicle);
     }
 
-    if (from) {
-      ok = ok && rowDate >= new Date(from);
-    }
-
-    if (to) {
-      ok = ok && rowDate <= new Date(to);
-    }
+    if (from) ok = ok && rowDate >= new Date(from);
+    if (to) ok = ok && rowDate <= new Date(to);
 
     return ok;
   });
