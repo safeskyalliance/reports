@@ -24,6 +24,7 @@ body {
   align-items: center;
   justify-content: center;
   font-size: 18px;
+  z-index: 9999;
 }
 
 /* LAYOUT */
@@ -38,11 +39,11 @@ body {
 
 .section {
   margin-top: 25px;
-  opacity: 0.8;
   font-size: 14px;
+  opacity: 0.75;
 }
 
-/* BUTTON */
+/* BUTTONS */
 .button {
   display: block;
   padding: 14px;
@@ -53,12 +54,11 @@ body {
   font-weight: 600;
 }
 
-/* GREEN BUTTON */
 .green {
   background: linear-gradient(135deg,#22c55e,#15803d);
 }
 
-/* MODAL (FIXED VERSION — NO BUGS) */
+/* MODAL */
 .modal {
   position: fixed;
   inset: 0;
@@ -73,36 +73,61 @@ body {
   display: flex;
 }
 
+/* 🔥 LEPŠI STARI UI (FIX) */
 .modal-box {
-  background: #111c2e;
-  padding: 22px;
-  border-radius: 16px;
-  width: 90%;
-  max-width: 420px;
+  background: #0f1c2e;
+  padding: 28px;
+  border-radius: 18px;
+  width: 92%;
+  max-width: 440px;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.55);
+  text-align: left;
 }
 
+.modal-box h2 {
+  margin-bottom: 10px;
+}
+
+/* INPUTS */
 .input {
   width: 100%;
-  padding: 12px;
-  margin: 8px 0;
-  border-radius: 10px;
+  padding: 14px;
+  margin: 10px 0;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: #0b1626;
+  color: white;
+  font-size: 14px;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #2563eb;
+}
+
+/* BUTTONS */
+.btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
   border: none;
-  background: #0f1c2e;
+  margin-top: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+/* BIG BLUE SUBMIT (kao ranije) */
+.primary {
+  background: linear-gradient(135deg, #2563eb, #1e40af);
   color: white;
 }
 
-/* ACTION BUTTONS */
-.btn {
-  width: 100%;
-  padding: 12px;
-  border-radius: 10px;
-  border: none;
-  margin-top: 10px;
-  cursor: pointer;
+/* CLOSE */
+.secondary {
+  background: #334155;
+  color: white;
 }
-
-.primary { background: #2563eb; color: white; }
-.secondary { background: #334155; color: white; }
 </style>
 </head>
 
@@ -200,7 +225,7 @@ function closeFuel() {
   document.getElementById("modal").classList.remove("show");
 }
 
-/* CLICK OUTSIDE */
+/* BACKDROP CLOSE */
 document.getElementById("modal").addEventListener("click", e => {
   if (e.target.id === "modal") closeFuel();
 });
@@ -216,7 +241,7 @@ async function submitFuel() {
   };
 
   if (!payload.date || !payload.company || !payload.quantity || !payload.person) {
-    alert("Fill all fields");
+    alert("Fill all fields!");
     return;
   }
 
