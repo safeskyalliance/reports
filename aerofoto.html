@@ -93,12 +93,29 @@ button {
 
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
 
 <script>
 
-const sheetURL =
-"https://docs.google.com/spreadsheets/d/e/2PACX-1vQ63_O7Bwpf9uCQy1UzwjZkotEuJTEFK0rqKSfXUbN_b9ImPM2hGGN3CqfMDZkdjmpMrrgG-z2XfW70/pub?output=csv";
+firebase.initializeApp({
+  apiKey: "AIzaSyCShhQ3KHWwbJMIB9STLvXiNTOa6UJZDn4",
+  authDomain: "safe-sky-app.firebaseapp.com",
+  projectId: "safe-sky-app"
+});
+
+const auth = firebase.auth();
+
+/* 🔒 SECURITY GATE */
+auth.onAuthStateChanged(user => {
+  if (!user) {
+    window.location.href = "index.html";
+  }
+});
+
+const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ63_O7Bwpf9uCQy1UzwjZkotEuJTEFK0rqKSfXUbN_b9ImPM2hGGN3CqfMDZkdjmpMrrgG-z2XfW70/pub?output=csv";
 
 let dataStore = [];
 
@@ -162,7 +179,6 @@ function applyFilter() {
     if (pilot) {
       const pic = row["Pilot in Command (Name code)"]?.toLowerCase() || "";
       const copilot = row["Copilot (Name code)"]?.toLowerCase() || "";
-
       ok = ok && (pic.includes(pilot) || copilot.includes(pilot));
     }
 
