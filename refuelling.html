@@ -98,12 +98,12 @@ const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRPLB_IA3YLNuv
 
 let sheetData = [];
 
-/* CLEAN KEYS */
-function cleanKey(key) {
-  return key?.trim().replace(/\uFEFF/g, "");
+/* CLEAN KEY */
+function cleanKey(k) {
+  return (k || "").trim().replace(/\uFEFF/g, "");
 }
 
-/* CONVERT dd.mm.yyyy -> yyyy-mm-dd (SAFE STRING COMPARE) */
+/* SAFE DATE NORMALIZER (dd.mm.yyyy → yyyy-mm-dd) */
 function normalizeDate(str) {
   if (!str) return "";
 
@@ -113,7 +113,7 @@ function normalizeDate(str) {
   return `${p[2]}-${p[1]}-${p[0]}`;
 }
 
-/* LOAD CSV */
+/* LOAD SHEET */
 Papa.parse(sheetURL, {
   download: true,
   header: true,
@@ -128,13 +128,13 @@ Papa.parse(sheetURL, {
       return clean;
     });
 
-    console.log("LOADED:", sheetData);
+    console.log("LOADED DATA:", sheetData);
 
     render(sheetData);
   }
 });
 
-/* RENDER TABLE */
+/* RENDER */
 function render(data) {
 
   const tbody = document.querySelector("tbody");
@@ -149,7 +149,7 @@ function render(data) {
 
   data.forEach(row => {
 
-    const vehicle = row["Vehicle Registration Number (License Plate)"];
+    const vehicle = row["Vehicle Registration Number (License Plate)"] || "";
     const odo = parseFloat(row["Odometer Reading (Kilometers)"]);
     const qty = parseFloat(row["Total Quantity (Liters)"]);
 
@@ -169,7 +169,7 @@ function render(data) {
     tr.innerHTML = `
       <td>${row["Date of Refuelling"] || ""}</td>
       <td>${row["Employee Full Name"] || ""}</td>
-      <td>${vehicle || ""}</td>
+      <td>${vehicle}</td>
       <td>${row["Type of Fuel Purchased"] || ""}</td>
       <td>${qty || ""}</td>
       <td>${row["Total Cost of Refuelling (Currency: RSD)"] || ""}</td>
@@ -182,29 +182,34 @@ function render(data) {
   });
 }
 
-/* FILTER (FIXED - STRING COMPARISON, NO DATE BUGS) */
+/* FILTER (FINAL SAFE VERSION) */
 function applyFilter() {
 
-  const vehicle = document.getElementById("vehicle-filter").value.toLowerCase();
-  const from = document.getElementById("date-from").value; // yyyy-mm-dd
+  const vehicleInput = document.getElementById("vehicle-filter").value.toLowerCase().trim();
+  const from = document.getElementById("date-from").value;
   const to = document.getElementById("date-to").value;
 
   const filtered = sheetData.filter(row => {
 
-    const dateStr = normalizeDate(row["Date of Refuelling"]);
-
-    if (!dateStr) return false;
+    const vehicle = (row["Vehicle Registration Number (License Plate)"] || "").toLowerCase();
+    const dateStr = normalizeDate(row["Date of Refuelling"] || "");
 
     let ok = true;
 
-    if (vehicle) {
-      ok = row["Vehicle Registration Number (License Plate)"]
-        ?.toLowerCase()
-        .includes(vehicle);
+    // VEHICLE FILTER
+    if (vehicleInput) {
+      ok = ok && vehicle.includes(vehicleInput);
     }
 
-    if (from) ok = ok && dateStr >= from;
-    if (to) ok = ok && dateStr <= to;
+    // DATE FILTER FROM
+    if (from && dateStr) {
+      ok = ok && dateStr >= from;
+    }
+
+    // DATE FILTER TO
+    if (to && dateStr) {
+      ok = ok && dateStr <= to;
+    }
 
     return ok;
   });
