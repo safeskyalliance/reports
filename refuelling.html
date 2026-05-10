@@ -22,9 +22,7 @@ body {
   text-align: center;
 }
 
-h1 {
-  margin-bottom: 20px;
-}
+h1 { margin-bottom: 20px; }
 
 table {
   width: 100%;
@@ -77,11 +75,12 @@ button {
       <th>Date</th>
       <th>Employee</th>
       <th>Vehicle</th>
-      <th>Fuel Type</th>
-      <th>Quantity (L)</th>
+      <th>Fuel</th>
+      <th>Qty (L)</th>
       <th>Cost (RSD)</th>
       <th>Odometer</th>
       <th>Notes</th>
+      <th>Consumption</th>
     </tr>
   </thead>
   <tbody></tbody>
@@ -97,7 +96,12 @@ const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-REFUEL-YOUR-LIN
 
 let sheetData = [];
 
-/* FIX: dd.mm.yyyy parser */
+/* CLEAN HEADER KEYS (FIX 90% BUGOVA) */
+function cleanKey(key) {
+  return key?.trim().replace(/\uFEFF/g, "");
+}
+
+/* DATE PARSER dd.mm.yyyy */
 function parseDMY(str) {
   if (!str) return null;
 
@@ -118,33 +122,63 @@ Papa.parse(sheetURL, {
   skipEmptyLines: true,
   complete: function(results) {
 
-    console.log("DATA:", results.data);
+    // normalize keys
+    sheetData = results.data.map(row => {
+      const clean = {};
+      Object.keys(row).forEach(k => {
+        clean[cleanKey(k)] = row[k];
+      });
+      return clean;
+    });
 
-    sheetData = results.data.filter(r => r["Date of Refuelling"]);
+    console.log("LOADED DATA:", sheetData);
 
     render(sheetData);
   }
 });
 
-/* RENDER */
+/* RENDER TABLE */
 function render(data) {
 
   const tbody = document.querySelector("tbody");
   tbody.innerHTML = "";
 
+  if (!data || data.length === 0) {
+    tbody.innerHTML = "<tr><td colspan='9'>No data</td></tr>";
+    return;
+  }
+
+  let lastOdo = {};
+
   data.forEach(row => {
+
+    const vehicle = row["Vehicle Registration Number (License Plate)"];
+    const odo = parseFloat(row["Odometer Reading (Kilometers)"]);
+    const qty = parseFloat(row["Total Quantity (Liters)"]);
+
+    let consumption = "-";
+
+    if (lastOdo[vehicle] && odo && qty) {
+      const dist = odo - lastOdo[vehicle];
+      if (dist > 0) {
+        consumption = ((qty / dist) * 100).toFixed(2);
+      }
+    }
+
+    lastOdo[vehicle] = odo;
 
     const tr = document.createElement("tr");
 
     tr.innerHTML = `
       <td>${row["Date of Refuelling"] || ""}</td>
       <td>${row["Employee Full Name"] || ""}</td>
-      <td>${row["Vehicle Registration Number (License Plate)"] || ""}</td>
+      <td>${vehicle || ""}</td>
       <td>${row["Type of Fuel Purchased"] || ""}</td>
-      <td>${row["Total Quantity (Liters)"] || ""}</td>
+      <td>${qty || ""}</td>
       <td>${row["Total Cost of Refuelling (Currency: RSD)"] || ""}</td>
-      <td>${row["Odometer Reading (Kilometers)"] || ""}</td>
+      <td>${odo || ""}</td>
       <td>${row["Additional Notes/Comments"] || ""}</td>
+      <td>${consumption}</td>
     `;
 
     tbody.appendChild(tr);
