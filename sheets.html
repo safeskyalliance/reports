@@ -40,6 +40,10 @@ body {
   text-align: center;
 }
 
+h1 {
+  margin-bottom: 20px;
+}
+
 .button {
   display: block;
   padding: 14px;
@@ -49,13 +53,24 @@ body {
   color: white;
   text-decoration: none;
   font-weight: 600;
+  transition: 0.2s ease;
+}
+
+.button:active {
+  transform: scale(0.98);
+}
+
+.section {
+  margin-top: 30px;
+  opacity: 0.9;
+  font-size: 14px;
 }
 </style>
 </head>
 
 <body>
 
-<!-- 🔒 LOCK OVERLAY -->
+<!-- 🔒 LOCK -->
 <div id="lockScreen">
   Checking access...
 </div>
@@ -65,16 +80,28 @@ body {
 
   <h1>🗂 Admin Panel</h1>
 
-  <a class="button" href="https://docs.google.com/spreadsheets/..." target="_blank">
-    ✈️ Aerofoto Reports
-  </a>
-
-  <a class="button" href="https://docs.google.com/spreadsheets/..." target="_blank">
-    ⛽ Refuelling Reports
-  </a>
+  <div class="section">📊 LIVE SYSTEMS</div>
 
   <a class="button" href="aerofoto.html">
-    📊 Aerofoto Live
+    ✈️ Aerofoto Live Report
+  </a>
+
+  <a class="button" href="refuelling.html">
+    ⛽ Refuelling Live Report
+  </a>
+
+  <div class="section">📁 GOOGLE SHEETS REPORTS</div>
+
+  <a class="button"
+     target="_blank"
+     href="https://docs.google.com/spreadsheets/d/e/YOUR_AEROFOTO_ID/pubhtml">
+    ✈️ Aerofoto Sheet Report
+  </a>
+
+  <a class="button"
+     target="_blank"
+     href="https://docs.google.com/spreadsheets/d/e/YOUR_REFUEL_ID/pubhtml">
+    ⛽ Refuelling Sheet Report
   </a>
 
 </div>
@@ -98,16 +125,14 @@ const OWNER_UID = "L1CAgL8P55gz6oztjj5LIY4saYu2";
 const lock = document.getElementById("lockScreen");
 const content = document.getElementById("content");
 
-/* 🔐 MAIN GUARD */
+/* 🔐 AUTH GUARD */
 auth.onAuthStateChanged(user => {
 
-  // NOT LOGGED IN
   if (!user) {
     window.location.href = "index.html";
     return;
   }
 
-  // NOT ADMIN
   if (user.uid !== OWNER_UID) {
     document.body.innerHTML = `
       <h2 style="color:white;text-align:center;margin-top:60px;">
@@ -117,7 +142,6 @@ auth.onAuthStateChanged(user => {
     return;
   }
 
-  // ADMIN OK
   lock.style.display = "none";
   content.classList.remove("hidden");
 
