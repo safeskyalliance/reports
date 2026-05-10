@@ -2,49 +2,60 @@
 <html lang="sr">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin Panel</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
 body {
-  font-family: Inter;
-  background:#0f1c2e;
-  color:white;
-  text-align:center;
+  font-family: Inter, sans-serif;
+  background: #0f1c2e;
+  color: white;
+  text-align: center;
+  margin: 0;
+  padding: 20px;
+}
+
+.hidden {
+  display: none;
 }
 
 .container {
-  max-width: 600px;
-  margin:auto;
-  padding:20px;
+  max-width: 800px;
+  margin: auto;
 }
 
 .button {
-  display:block;
-  padding:14px;
-  margin:10px 0;
-  background:#2563eb;
-  color:white;
-  text-decoration:none;
-  border-radius:12px;
+  display: block;
+  padding: 14px;
+  margin: 10px 0;
+  border-radius: 12px;
+  background: #2563eb;
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
-<h2>🗂 Admin Panel</h2>
+<div id="content" class="hidden container">
 
-<a class="button" href="aerofoto.html">✈️ Aerofoto Reports</a>
-<a class="button" href="refuelling.html">⛽ Refuelling Reports</a>
+  <h1>🗂 Admin Panel</h1>
 
-<a class="button" target="_blank"
-href="https://docs.google.com/spreadsheets/d/1MoFmt4GgCdACzU-PtgUvMMXfzfFxyVfMdEjhGsB6eAM/edit">
-📊 Open Google Sheet
-</a>
+  <a class="button" href="https://docs.google.com/spreadsheets/..." target="_blank">
+    ✈️ Aerophoto Reports
+  </a>
 
-<a class="button" href="index.html">🏠 Back</a>
+  <a class="button" href="https://docs.google.com/spreadsheets/..." target="_blank">
+    ⛽ Refuelling Reports
+  </a>
+
+  <a class="button" href="aerofoto.html">
+    📊 Live Aerofoto Log
+  </a>
 
 </div>
 
@@ -63,12 +74,29 @@ const auth = firebase.auth();
 
 const OWNER_UID = "L1CAgL8P55gz6oztjj5LIY4saYu2";
 
+const content = document.getElementById("content");
+
+/* 🔐 FULL SECURITY CHECK */
 auth.onAuthStateChanged(user => {
 
-  if(!user || user.uid !== OWNER_UID){
-    alert("Access denied");
+  if (!user) {
     window.location.href = "index.html";
+    return;
   }
+
+  if (user.uid !== OWNER_UID) {
+
+    document.body.innerHTML = `
+      <h2 style="color:white; text-align:center; margin-top:50px;">
+        ⛔ Access Denied
+      </h2>
+    `;
+
+    return;
+  }
+
+  // OK — OWNER
+  content.classList.remove("hidden");
 
 });
 
