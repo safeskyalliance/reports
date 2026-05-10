@@ -103,17 +103,7 @@ function cleanKey(k) {
   return (k || "").trim().replace(/\uFEFF/g, "");
 }
 
-/* SAFE DATE NORMALIZER (dd.mm.yyyy → yyyy-mm-dd) */
-function normalizeDate(str) {
-  if (!str) return "";
-
-  const p = str.split(".");
-  if (p.length !== 3) return "";
-
-  return `${p[2]}-${p[1]}-${p[0]}`;
-}
-
-/* LOAD SHEET */
+/* LOAD CSV */
 Papa.parse(sheetURL, {
   download: true,
   header: true,
@@ -128,22 +118,15 @@ Papa.parse(sheetURL, {
       return clean;
     });
 
-    console.log("LOADED DATA:", sheetData);
-
     render(sheetData);
   }
 });
 
-/* RENDER */
+/* RENDER TABLE */
 function render(data) {
 
   const tbody = document.querySelector("tbody");
   tbody.innerHTML = "";
-
-  if (!data || data.length === 0) {
-    tbody.innerHTML = "<tr><td colspan='9'>No data</td></tr>";
-    return;
-  }
 
   let lastOdo = {};
 
@@ -182,33 +165,45 @@ function render(data) {
   });
 }
 
-/* FILTER (FINAL SAFE VERSION) */
+/* 🔥 FINAL SAFE FILTER (TIMESTAMP FIX) */
 function applyFilter() {
 
   const vehicleInput = document.getElementById("vehicle-filter").value.toLowerCase().trim();
-  const from = document.getElementById("date-from").value;
-  const to = document.getElementById("date-to").value;
+
+  const fromVal = document.getElementById("date-from").value;
+  const toVal = document.getElementById("date-to").value;
+
+  const from = fromVal ? new Date(fromVal).getTime() : null;
+  const to = toVal ? new Date(toVal).getTime() : null;
 
   const filtered = sheetData.filter(row => {
 
     const vehicle = (row["Vehicle Registration Number (License Plate)"] || "").toLowerCase();
-    const dateStr = normalizeDate(row["Date of Refuelling"] || "");
+
+    const rawDate = row["Date of Refuelling"];
+    if (!rawDate) return false;
+
+    const parts = rawDate.split(".");
+    if (parts.length !== 3) return false;
+
+    const rowTime = new Date(
+      parseInt(parts[2], 10),
+      parseInt(parts[1], 10) - 1,
+      parseInt(parts[0], 10)
+    ).getTime();
 
     let ok = true;
 
-    // VEHICLE FILTER
     if (vehicleInput) {
       ok = ok && vehicle.includes(vehicleInput);
     }
 
-    // DATE FILTER FROM
-    if (from && dateStr) {
-      ok = ok && dateStr >= from;
+    if (from !== null) {
+      ok = ok && rowTime >= from;
     }
 
-    // DATE FILTER TO
-    if (to && dateStr) {
-      ok = ok && dateStr <= to;
+    if (to !== null) {
+      ok = ok && rowTime <= to;
     }
 
     return ok;
