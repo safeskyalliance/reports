@@ -16,7 +16,9 @@ body {
   margin: 0;
 }
 
-.hidden { display:none; }
+.hidden {
+  display: none;
+}
 
 .container {
   max-width: 520px;
@@ -24,28 +26,58 @@ body {
   padding: 20px;
 }
 
-input, button {
+input,
+button {
   width: 100%;
   padding: 12px;
   margin: 8px 0;
   border-radius: 10px;
   border: none;
   font-size: 16px;
+  box-sizing: border-box;
 }
 
 button {
   background: #2563eb;
   color: white;
+  cursor: pointer;
 }
 
 .button {
-  display:block;
+  display: block;
   padding: 14px;
   margin: 10px 0;
   border-radius: 12px;
-  background:#1e3a8a;
-  color:white;
-  text-decoration:none;
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  transition: 0.2s ease;
+}
+
+.button:active {
+  transform: scale(0.98);
+}
+
+/* COLORS */
+
+.blue {
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+}
+
+.orange {
+  background: linear-gradient(135deg, #f97316, #c2410c);
+}
+
+.green {
+  background: linear-gradient(135deg, #22c55e, #15803d);
+}
+
+.yellow {
+  background: linear-gradient(135deg, #e0c060, #c9b04f);
+}
+
+.admin {
+  background: linear-gradient(135deg, #475569, #1e293b);
 }
 </style>
 </head>
@@ -54,46 +86,59 @@ button {
 
 <!-- LOGIN -->
 <div id="login" class="container">
+
   <h2>Login</h2>
+
   <input id="email" type="email" placeholder="Email">
+
   <input id="pw" type="password" placeholder="Password">
+
   <button onclick="login()">Login</button>
+
 </div>
 
-<!-- HUB -->
+<!-- APP -->
 <div id="app" class="hidden container">
 
   <h2>✈️ Safe Sky Hub</h2>
 
-  <!-- FORMS -->
-  <a class="button" target="_blank"
+  <!-- GOOGLE FORMS -->
+
+  <a class="button blue"
+     target="_blank"
      href="https://docs.google.com/forms/d/e/1FAIpQLScgHExmEVdK-I0OZ8AnA3uJ0ASJPoEe_eNW32ugQ5lpcx-p4Q/viewform">
      ✈️ Aerophoto Report
   </a>
 
-  <a class="button" target="_blank"
+  <a class="button blue"
+     target="_blank"
      href="https://forms.gle/LEDoAUUqfPH73GAu5">
      🛠 Equipment Request
   </a>
 
-  <a class="button" target="_blank"
+  <a class="button orange"
+     target="_blank"
      href="https://forms.gle/PDHTD1JdZRuz3St37">
      ⚠️ Fault Report
   </a>
 
-  <a class="button" target="_blank"
+  <a class="button green"
+     target="_blank"
      href="https://forms.gle/kWDjHkJuhV6eNNZA9">
      📝 Leave Request
   </a>
 
-  <a class="button" target="_blank"
+  <a class="button yellow"
+     target="_blank"
      href="https://forms.gle/NNwYZCSLVjjhRCBAA">
      ⛽ Fuel Report
   </a>
 
- 
-  <!-- ADMIN -->
-  <a class="button" href="sheets.html">🗂 Admin Panel</a>
+  <!-- ADMIN PANEL -->
+
+  <a class="button admin" href="sheets.html">
+     🗂 Admin Panel
+  </a>
 
   <button onclick="logout()">Logout</button>
 
@@ -116,29 +161,49 @@ const auth = firebase.auth();
 const loginBox = document.getElementById("login");
 const appBox = document.getElementById("app");
 
-window.login = function() {
+/* LOGIN */
+window.login = async function () {
 
-  const email = document.getElementById("email").value;
-  const pw = document.getElementById("pw").value;
+  try {
 
-  auth.signInWithEmailAndPassword(email, pw)
-    .catch(err => alert(err.message));
+    const email = document.getElementById("email").value.trim();
+    const pw = document.getElementById("pw").value;
+
+    if (!email || !pw) {
+      alert("Unesi email i password");
+      return;
+    }
+
+    await auth.signInWithEmailAndPassword(email, pw);
+
+  } catch (err) {
+
+    console.error(err);
+    alert(err.message);
+
+  }
+
 };
 
-window.logout = function() {
+/* LOGOUT */
+window.logout = function () {
   auth.signOut();
 };
 
+/* AUTH STATE */
 auth.onAuthStateChanged(user => {
 
-  if(!user){
-    loginBox.style.display = "block";
+  if (!user) {
+
+    loginBox.classList.remove("hidden");
     appBox.classList.add("hidden");
     return;
+
   }
 
-  loginBox.style.display = "none";
+  loginBox.classList.add("hidden");
   appBox.classList.remove("hidden");
+
 });
 
 </script>
