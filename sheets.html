@@ -53,7 +53,6 @@ h1 {
   color: white;
   text-decoration: none;
   font-weight: 600;
-  transition: 0.2s ease;
   cursor: pointer;
 }
 
@@ -67,15 +66,20 @@ h1 {
   font-size: 14px;
 }
 
-/* MODAL */
+/* MODAL FIX */
 .modal {
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.7);
-  display: flex;
   align-items: center;
   justify-content: center;
   z-index: 9999;
+
+  display: none; /* 🔥 KLJUČ */
+}
+
+.modal.show {
+  display: flex;
 }
 
 .modal-content {
@@ -121,20 +125,10 @@ h1 {
     ➕ Fuel Admin Entry
   </div>
 
-  <div class="section">📁 GOOGLE SHEETS REPORTS</div>
-
-  <a class="button" target="_blank" href="#">
-    ✈️ Aerofoto Sheet Report
-  </a>
-
-  <a class="button" target="_blank" href="#">
-    ⛽ Refuelling Sheet Report
-  </a>
-
 </div>
 
 <!-- 🔥 MODAL -->
-<div id="fuelModal" class="modal hidden">
+<div id="fuelModal" class="modal">
 
   <div class="modal-content">
 
@@ -142,7 +136,7 @@ h1 {
 
     <input id="fuelDate" type="date" class="input">
 
-    <!-- DROPDOWN FIX -->
+    <!-- DROPDOWN -->
     <select id="fuelCompany" class="input">
       <option value="">Select Company</option>
       <option value="Topgeo">Topgeo</option>
@@ -178,7 +172,7 @@ const OWNER_UID = "L1CAgL8P55gz6oztjj5LIY4saYu2";
 
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw4tk_GQrs_KFABInbpKjekVAeVYUlcdHmXYUjJbSNqObYcDWJVFk23s4E6SuQt7Pfk1Q/exec";
 
-/* FIX: prevent undefined crash */
+/* AUTH */
 auth.onAuthStateChanged(user => {
 
   if (!user) {
@@ -196,19 +190,21 @@ auth.onAuthStateChanged(user => {
 
 });
 
-/* ensure modal starts hidden */
-document.addEventListener("DOMContentLoaded", function () {
-  document.getElementById("fuelModal").classList.add("hidden");
-});
-
-/* MODAL */
+/* MODAL FIX */
 function openFuelForm() {
-  document.getElementById("fuelModal").classList.remove("hidden");
+  document.getElementById("fuelModal").classList.add("show");
 }
 
 function closeFuelForm() {
-  document.getElementById("fuelModal").classList.add("hidden");
+  document.getElementById("fuelModal").classList.remove("show");
 }
+
+/* CLICK OUTSIDE TO CLOSE */
+document.getElementById("fuelModal").addEventListener("click", function(e) {
+  if (e.target === this) {
+    closeFuelForm();
+  }
+});
 
 /* SUBMIT */
 async function submitFuel() {
