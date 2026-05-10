@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Refuelling Live Data</title>
+<title>Refuelling Live</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
@@ -62,7 +62,7 @@ button {
 
 <div class="container">
 
-<h1>⛽ Refuelling Live Data</h1>
+<h1>⛽ Refuelling Live</h1>
 
 <div>
   <input type="text" id="vehicle-filter" placeholder="Vehicle">
@@ -78,8 +78,8 @@ button {
       <th>Employee</th>
       <th>Vehicle</th>
       <th>Fuel</th>
-      <th>Qty (L)</th>
-      <th>Cost (RSD)</th>
+      <th>Qty</th>
+      <th>Cost</th>
       <th>Odometer</th>
       <th>Notes</th>
       <th>Consumption</th>
@@ -98,29 +98,32 @@ const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRPLB_IA3YLNuv
 
 let sheetData = [];
 
-/* CLEAN KEY */
-function cleanKey(k) {
-  return (k || "").trim().replace(/\uFEFF/g, "");
-}
-
-/* LOAD CSV */
+/* CLEAN + LOAD */
 Papa.parse(sheetURL, {
   download: true,
   header: true,
   skipEmptyLines: true,
   complete: function(results) {
-
-    sheetData = results.data.map(row => {
-      const clean = {};
-      Object.keys(row).forEach(k => {
-        clean[cleanKey(k)] = row[k];
-      });
-      return clean;
-    });
-
+    sheetData = results.data;
     render(sheetData);
   }
 });
+
+/* 🔥 FIXED DATE PARSER */
+function toISO(dateStr) {
+  if (!dateStr) return null;
+
+  dateStr = dateStr.trim().replace(/\.$/, ""); // uklanja trailing dot
+
+  const p = dateStr.split(".");
+  if (p.length < 3) return null;
+
+  const day = p[0].padStart(2, "0");
+  const month = p[1].padStart(2, "0");
+  const year = p[2].slice(0, 4);
+
+  return `${year}-${month}-${day}`;
+}
 
 /* RENDER TABLE */
 function render(data) {
@@ -165,32 +168,19 @@ function render(data) {
   });
 }
 
-/* 🔥 FINAL SAFE FILTER (TIMESTAMP FIX) */
+/* 🔥 FILTER (SAFE DATE COMPARE) */
 function applyFilter() {
 
   const vehicleInput = document.getElementById("vehicle-filter").value.toLowerCase().trim();
-
-  const fromVal = document.getElementById("date-from").value;
-  const toVal = document.getElementById("date-to").value;
-
-  const from = fromVal ? new Date(fromVal).getTime() : null;
-  const to = toVal ? new Date(toVal).getTime() : null;
+  const from = document.getElementById("date-from").value;
+  const to = document.getElementById("date-to").value;
 
   const filtered = sheetData.filter(row => {
 
     const vehicle = (row["Vehicle Registration Number (License Plate)"] || "").toLowerCase();
 
-    const rawDate = row["Date of Refuelling"];
-    if (!rawDate) return false;
-
-    const parts = rawDate.split(".");
-    if (parts.length !== 3) return false;
-
-    const rowTime = new Date(
-      parseInt(parts[2], 10),
-      parseInt(parts[1], 10) - 1,
-      parseInt(parts[0], 10)
-    ).getTime();
+    const iso = toISO(row["Date of Refuelling"]);
+    if (!iso) return false;
 
     let ok = true;
 
@@ -198,12 +188,12 @@ function applyFilter() {
       ok = ok && vehicle.includes(vehicleInput);
     }
 
-    if (from !== null) {
-      ok = ok && rowTime >= from;
+    if (from) {
+      ok = ok && iso >= from;
     }
 
-    if (to !== null) {
-      ok = ok && rowTime <= to;
+    if (to) {
+      ok = ok && iso <= to;
     }
 
     return ok;
