@@ -16,7 +16,6 @@ body {
   padding: 0;
 }
 
-/* LOCK SCREEN */
 #lockScreen {
   position: fixed;
   inset: 0;
@@ -28,10 +27,7 @@ body {
   z-index: 9999;
 }
 
-/* CONTENT */
-.hidden {
-  display: none;
-}
+.hidden { display: none; }
 
 .container {
   max-width: 900px;
@@ -40,9 +36,7 @@ body {
   text-align: center;
 }
 
-h1 {
-  margin-bottom: 20px;
-}
+h1 { margin-bottom: 20px; }
 
 .button {
   display: block;
@@ -56,26 +50,21 @@ h1 {
   cursor: pointer;
 }
 
-.button:active {
-  transform: scale(0.98);
-}
-
 .section {
   margin-top: 30px;
   opacity: 0.9;
   font-size: 14px;
 }
 
-/* MODAL FIX */
+/* MODAL */
 .modal {
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.7);
+  display: none;
   align-items: center;
   justify-content: center;
   z-index: 9999;
-
-  display: none; /* 🔥 KLJUČ */
 }
 
 .modal.show {
@@ -104,20 +93,13 @@ h1 {
 
 <body>
 
-<!-- 🔒 LOCK -->
-<div id="lockScreen">
-  Checking access...
-</div>
+<!-- LOCK -->
+<div id="lockScreen">Checking access...</div>
 
-<!-- ADMIN CONTENT -->
+<!-- CONTENT -->
 <div id="content" class="hidden container">
 
   <h1>🗂 Admin Panel</h1>
-
-  <div class="section">📊 LIVE SYSTEMS</div>
-
-  <a class="button" href="aerofoto.html">✈️ Aerofoto Live Report</a>
-  <a class="button" href="refuelling.html">⛽ Refuelling Live Report</a>
 
   <div class="section">⛽ FUEL MANAGEMENT</div>
 
@@ -127,7 +109,7 @@ h1 {
 
 </div>
 
-<!-- 🔥 MODAL -->
+<!-- MODAL -->
 <div id="fuelModal" class="modal">
 
   <div class="modal-content">
@@ -136,7 +118,6 @@ h1 {
 
     <input id="fuelDate" type="date" class="input">
 
-    <!-- DROPDOWN -->
     <select id="fuelCompany" class="input">
       <option value="">Select Company</option>
       <option value="Topgeo">Topgeo</option>
@@ -154,43 +135,11 @@ h1 {
 
 </div>
 
-<!-- FIREBASE -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-
 <script>
-
-firebase.initializeApp({
-  apiKey: "AIzaSyCShhQ3KHWwbJMIB9STLvXiNTOa6UJZDn4",
-  authDomain: "safe-sky-app.firebaseapp.com",
-  projectId: "safe-sky-app"
-});
-
-const auth = firebase.auth();
-
-const OWNER_UID = "L1CAgL8P55gz6oztjj5LIY4saYu2";
 
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw4tk_GQrs_KFABInbpKjekVAeVYUlcdHmXYUjJbSNqObYcDWJVFk23s4E6SuQt7Pfk1Q/exec";
 
-/* AUTH */
-auth.onAuthStateChanged(user => {
-
-  if (!user) {
-    window.location.href = "index.html";
-    return;
-  }
-
-  if (user.uid !== OWNER_UID) {
-    document.body.innerHTML = `<h2 style="color:white;text-align:center;margin-top:60px;">⛔ Access Denied</h2>`;
-    return;
-  }
-
-  document.getElementById("lockScreen").style.display = "none";
-  document.getElementById("content").classList.remove("hidden");
-
-});
-
-/* MODAL FIX */
+/* OPEN / CLOSE MODAL */
 function openFuelForm() {
   document.getElementById("fuelModal").classList.add("show");
 }
@@ -199,11 +148,9 @@ function closeFuelForm() {
   document.getElementById("fuelModal").classList.remove("show");
 }
 
-/* CLICK OUTSIDE TO CLOSE */
+/* CLOSE ON BACKDROP */
 document.getElementById("fuelModal").addEventListener("click", function(e) {
-  if (e.target === this) {
-    closeFuelForm();
-  }
+  if (e.target === this) closeFuelForm();
 });
 
 /* SUBMIT */
@@ -221,19 +168,32 @@ async function submitFuel() {
     return;
   }
 
-  await fetch(SCRIPT_URL, {
-    method: "POST",
-    body: JSON.stringify(payload)
-  });
+  try {
 
-  alert("Fuel saved!");
+    const res = await fetch(SCRIPT_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    });
 
-  closeFuelForm();
+    const text = await res.text();
+    console.log("SERVER RESPONSE:", text);
 
-  document.getElementById("fuelDate").value = "";
-  document.getElementById("fuelCompany").value = "";
-  document.getElementById("fuelQuantity").value = "";
-  document.getElementById("fuelPerson").value = "";
+    alert("Fuel saved!");
+
+    closeFuelForm();
+
+    document.getElementById("fuelDate").value = "";
+    document.getElementById("fuelCompany").value = "";
+    document.getElementById("fuelQuantity").value = "";
+    document.getElementById("fuelPerson").value = "";
+
+  } catch (err) {
+    console.error(err);
+    alert("Error sending data");
+  }
 }
 
 </script>
