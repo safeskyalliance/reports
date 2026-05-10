@@ -12,18 +12,32 @@ body {
   font-family: Inter, sans-serif;
   background: #0f1c2e;
   color: white;
-  text-align: center;
   margin: 0;
-  padding: 20px;
+  padding: 0;
 }
 
+/* LOCK SCREEN */
+#lockScreen {
+  position: fixed;
+  inset: 0;
+  background: #0f1c2e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  z-index: 9999;
+}
+
+/* CONTENT */
 .hidden {
   display: none;
 }
 
 .container {
-  max-width: 800px;
+  max-width: 900px;
   margin: auto;
+  padding: 20px;
+  text-align: center;
 }
 
 .button {
@@ -41,12 +55,18 @@ body {
 
 <body>
 
+<!-- 🔒 LOCK OVERLAY -->
+<div id="lockScreen">
+  Checking access...
+</div>
+
+<!-- ADMIN CONTENT -->
 <div id="content" class="hidden container">
 
   <h1>🗂 Admin Panel</h1>
 
   <a class="button" href="https://docs.google.com/spreadsheets/..." target="_blank">
-    ✈️ Aerophoto Reports
+    ✈️ Aerofoto Reports
   </a>
 
   <a class="button" href="https://docs.google.com/spreadsheets/..." target="_blank">
@@ -54,11 +74,12 @@ body {
   </a>
 
   <a class="button" href="aerofoto.html">
-    📊 Live Aerofoto Log
+    📊 Aerofoto Live
   </a>
 
 </div>
 
+<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 
@@ -74,28 +95,30 @@ const auth = firebase.auth();
 
 const OWNER_UID = "L1CAgL8P55gz6oztjj5LIY4saYu2";
 
+const lock = document.getElementById("lockScreen");
 const content = document.getElementById("content");
 
-/* 🔐 FULL SECURITY CHECK */
+/* 🔐 MAIN GUARD */
 auth.onAuthStateChanged(user => {
 
+  // NOT LOGGED IN
   if (!user) {
     window.location.href = "index.html";
     return;
   }
 
+  // NOT ADMIN
   if (user.uid !== OWNER_UID) {
-
     document.body.innerHTML = `
-      <h2 style="color:white; text-align:center; margin-top:50px;">
+      <h2 style="color:white;text-align:center;margin-top:60px;">
         ⛔ Access Denied
       </h2>
     `;
-
     return;
   }
 
-  // OK — OWNER
+  // ADMIN OK
+  lock.style.display = "none";
   content.classList.remove("hidden");
 
 });
